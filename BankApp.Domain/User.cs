@@ -11,7 +11,7 @@ namespace BankApp.Domain
         public int UserId { set; get; }
         public string Login { set; get; }
         public string Password { set; get; }
-
+        public string Salt { set; get; }
         public Account Account { set; get; }
     }
 }
