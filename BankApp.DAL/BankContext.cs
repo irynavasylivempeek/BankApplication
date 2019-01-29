@@ -22,9 +22,22 @@ namespace BankApp.DAL
             Database.EnsureCreated();
         }
 
-    //     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //{
-    //    optionsBuilder.UseSqlServer(@"Server=(localdb)\\mssqllocaldb;Database=inheritedb;Trusted_Connection=True;");
-    //}
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>()
+                .Property(b => b.Login)
+                .IsRequired();
+            modelBuilder.Entity<User>()
+                .Property(b => b.Password)
+                .IsRequired();
+            modelBuilder.Entity<User>()
+                .Property(b => b.Salt)
+                .IsRequired();
+        }
+
+        //     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlServer(@"Server=(localdb)\\mssqllocaldb;Database=inheritedb;Trusted_Connection=True;");
+        //}
     }
 }
