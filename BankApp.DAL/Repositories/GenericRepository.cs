@@ -12,6 +12,12 @@ namespace BankApp.DAL.Repositories
         protected readonly BankContext _context;
         protected readonly DbSet<TEntity> _entities;
 
+        public GenericRepository(BankContext context) 
+        {
+            _context = context;
+            _entities = context.Set<TEntity>();
+        }
+
         public void Add(TEntity entity)
         {
             _entities.Add(entity);
