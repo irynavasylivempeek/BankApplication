@@ -14,6 +14,7 @@ namespace BankApp.DAL.Repositories
     }
     public class TransactionRepository : GenericRepository<Transaction>, ITransactionRepository
     {
+
         public TransactionRepository(BankContext context) : base(context)
         {
         }

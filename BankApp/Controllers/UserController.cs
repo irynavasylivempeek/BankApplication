@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BankApp.Controllers
 {
     [Route("api/[controller]")]
-    public class UserController
+    public class UserController : Controller
     {
         private readonly IUserService _userService;
 
@@ -18,16 +18,16 @@ namespace BankApp.Controllers
             _userService = userService;
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         public void Register([FromBody]LoginUser user)
         {
             _userService.Add(user);
         }
 
-        [HttpPost]
-        public void Login([FromBody] LoginUser user)
+        [HttpPost("login")]
+        public bool Login([FromBody] LoginUser user)
         {
-
-        } 
+            return _userService.Login(user).Succeed;
+        }
     }
 }

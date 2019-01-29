@@ -9,6 +9,7 @@ namespace BankApp.DAL.Repositories
 {
     public interface IAccountRepository : IGenericRepository<Account>
     {
+        
     }
     public class AccountRepository : GenericRepository<Account>, IAccountRepository
     {

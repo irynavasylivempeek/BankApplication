@@ -35,11 +35,13 @@ namespace BankApp.BLL
                     _unitOfWork.Accounts.Update(account);
                     _unitOfWork.Transactions.Add(new DepositTransaction() { AccountId = account.AccountId, Amount = transactionInfo.Amount });
                     break;
+
                 case TransactionType.Withdraw:
                     account.Balance -= transactionInfo.Amount;
                     _unitOfWork.Accounts.Update(account);
                     _unitOfWork.Transactions.Add(new WithdrawTransaction() { AccountId = account.AccountId, Amount = transactionInfo.Amount });
                     break;
+
                 case TransactionType.Transfer:
                     var receiver =
                         _unitOfWork.Accounts.FindSingleOrDefault(c => c.UserId == transactionInfo.ReceiverId);
