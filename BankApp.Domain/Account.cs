@@ -15,7 +15,7 @@ namespace BankApp.Domain
         public int UserId { set; get; }
         public User User { set; get; }
 
-        List<Transaction> Transactions { set; get; }   
+        public List<Transaction> Transactions { set; get; }   
               
         
     }

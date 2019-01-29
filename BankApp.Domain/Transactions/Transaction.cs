@@ -10,7 +10,6 @@ namespace BankApp.Domain.Transactions
         [Key]
         public int TransactionId { set; get; }
         public double Amount { set; get; }
-
         public int AccountId { set; get; }
         public Account Account { set; get; }
     }

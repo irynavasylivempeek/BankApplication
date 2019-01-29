@@ -8,8 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BankApp.DAL\BankApp.DAL.csproj" />
-    <ProjectReference Include="..\BankApp.DTO\BankApp.DTO.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="2.2.0" />
   </ItemGroup>
 
 </Project>
