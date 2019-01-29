@@ -9,9 +9,9 @@ namespace BankApp.DAL.Repositories
 {
     public interface IGenericRepository<TEntity> where TEntity : class
     {
-        void Add(TEntity entity);
+        TEntity Add(TEntity entity);
         void AddRange(IEnumerable<TEntity> entities);
-        void Update(TEntity entity);
+        TEntity Update(TEntity entity);
         void UpdateRange(IEnumerable<TEntity> entities);
         void Remove(TEntity entity);
         void RemoveRange(IEnumerable<TEntity> entities);
@@ -32,9 +32,9 @@ namespace BankApp.DAL.Repositories
             _entities = context.Set<TEntity>();
         }
 
-        public void Add(TEntity entity)
+        public TEntity Add(TEntity entity)
         {
-            _entities.Add(entity);
+            return _entities.Add(entity).Entity;
         }
 
         public void AddRange(IEnumerable<TEntity> entities)
@@ -72,9 +72,9 @@ namespace BankApp.DAL.Repositories
             _entities.RemoveRange(entities);
         }
 
-        public void Update(TEntity entity)
+        public TEntity Update(TEntity entity)
         {
-            _entities.Update(entity);
+            return _entities.Update(entity).Entity;
         }
 
         public void UpdateRange(IEnumerable<TEntity> entities)
