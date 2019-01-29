@@ -4,11 +4,17 @@ using System.Linq.Expressions;
 using System.Text;
 using BankApp.DAL.Repositories.Interfaces;
 using BankApp.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace BankApp.DAL.Repositories
 {
     public class UserRepository : IUserRepository
     {
+        protected readonly DbSet<User> _entities;
+        public UserRepository(BankContext context)
+        {
+            _entities = context.Users;
+        }
         public void Add(User entity)
         {
             throw new NotImplementedException();

@@ -4,11 +4,17 @@ using System.Linq.Expressions;
 using System.Text;
 using BankApp.DAL.Repositories.Interfaces;
 using BankApp.Domain.Transactions;
+using Microsoft.EntityFrameworkCore;
 
 namespace BankApp.DAL.Repositories
 {
     public class TransactionRepository : ITransactionRepository
     {
+        protected readonly DbSet<Transaction> _entities;
+        public TransactionRepository(BankContext context)
+        {
+            _entities = context.Transactions;
+        }
         public void Add(Transaction entity)
         {
             throw new NotImplementedException();
@@ -20,7 +26,7 @@ namespace BankApp.DAL.Repositories
         }
 
         public Transaction Find(int id)
-        {
+        { 
             throw new NotImplementedException();
         }
 
