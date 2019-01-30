@@ -1,20 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using BankApp.DAL;
 using BankApp.Domain;
+using BankApp.Domain.Transactions;
 using BankApp.DTO;
+using BankApp.DTO.Enums;
 using BankApp.DTO.Users;
 using BankApp.Utils;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace BankApp.BLL
 {
     public interface IUserService
     {
         UserDto Add(LoginUser user);
-        UserDto GetById(int userId);
+        UserDto GetUserFullInfoById(int userId);
+        bool Exists(int id);
         LoginResult Login(LoginUser loginUser);
+        
 
     }
     public class UserService : IUserService
@@ -44,7 +50,7 @@ namespace BankApp.BLL
             };
         }
 
-        public UserDto GetById(int userId)
+        public UserDto GetUserFullInfoById(int userId)
         {
             var user = _unitOfWork.Users.GetIncludingAccount(c => c.UserId == userId);
             if (user == null)
@@ -54,14 +60,25 @@ namespace BankApp.BLL
                 UserId = userId,
                 Balance = user.Account.Balance,
                 Login = user.Login,
-                Transactions = user.Account.Transactions.Select(t=>new TransactionDto()
+                Transactions = user.Account.Transactions.Union(user.Account.IncomingTransferTransactions).Select(c =>
                 {
-                    TransactionId = t.TransactionId,
-                    Amount = t.Amount
+                    Enum.TryParse(c.GetType().ShortDisplayName(), out TransactionType type);
+                    return new TransactionDto()
+                    {
+                        UserId = c.Account.UserId,
+                        Amount = c.Amount,
+                        TransactionId = c.TransactionId,
+                        Type = type,
+                        ReceiverId = (c as TransferTransaction)?.DestinationId ?? 0
+                    };
                 }).ToList()
             };
         }
 
+        public bool Exists(int id)
+        {
+            return _unitOfWork.Users.Find(id) != null;
+        }
         public LoginResult Login(LoginUser loginUser)
         {
             var user = _unitOfWork.Users.FindSingleOrDefault(c => c.Login == loginUser.Login);

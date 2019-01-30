@@ -23,6 +23,7 @@
     <ProjectReference Include="..\BankApp.BLL\BankApp.BLL.csproj" />
     <ProjectReference Include="..\BankApp.DAL\BankApp.DAL.csproj" />
     <ProjectReference Include="..\BankApp.DTO\BankApp.DTO.csproj" />
+    <ProjectReference Include="..\BankApp.Utils\BankApp.Utils.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using BankApp.BLL;
 using BankApp.DTO;
+using BankApp.DTO.Transaction;
+using BankApp.ViewModel.TransactionsViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BankApp.Controllers
 {
@@ -20,41 +24,89 @@ namespace BankApp.Controllers
             _userService = userService;
         }
 
-        [HttpPost("deposite/{id}")]
-        public string Deposite(int id, [FromBody] double amount)
+        [HttpPost("deposite")]
+        public TransactionResult Deposite([FromBody]DepositeViewModel depositeViewModel)
         {
-            _transactionService.Deposit(id, amount);
-            var newBalance = _userService.GetById(id).Balance;
-            return $"Rest: {newBalance}";
+            if (ModelState.IsValid)
+            {
+                _transactionService.Deposit(depositeViewModel.UserId, depositeViewModel.Amount);
+                var freshUserDetails = _userService.GetUserFullInfoById(depositeViewModel.UserId);
+                return new TransactionResult {IsSuccessful = true, UserDetails = freshUserDetails};
+            }
+            var result = new TransactionResult
+            {
+                IsSuccessful = false,
+                ErrorMessages = typeof(DepositeViewModel)
+                    .GetProperties()
+                    .SelectMany(c =>
+                    {
+                        if (ModelState.TryGetValue(c.Name, out ModelStateEntry value))
+                        {
+                            var errors = value.Errors.Select(error => error.ErrorMessage);
+                            return errors;
+                        }
+                        return new List<string>();
+                    }).ToList()
+            };
+            return result;
         }
 
-        [HttpPost("withdraw/{id}")]
+        [HttpPost("withdraw")]
 
-        public string Withdraw(int id, [FromBody]double amount)
+        public TransactionResult Withdraw([FromBody]WithdrawViewModel withdrawViewModel)
         {
-            var account = _userService.GetById(id);
-            if (account == null)
-                return null;
-            if (account.Balance < amount)
-                return "Lack of money on the account to withdraw";
-            _transactionService.Withdraw(id, amount);
-            var newBalance = _userService.GetById(id).Balance;
-            return $"Rest: {newBalance}";
+            if (ModelState.IsValid)
+            {
+                _transactionService.Withdraw(withdrawViewModel.UserId, withdrawViewModel.Amount);
+                var freshUserDetails = _userService.GetUserFullInfoById(withdrawViewModel.UserId);
+                return new TransactionResult { IsSuccessful = true, UserDetails = freshUserDetails };
+            }
+            var result = new TransactionResult
+            {
+                IsSuccessful = false,
+                ErrorMessages = typeof(WithdrawViewModel)
+                    .GetProperties()
+                    .SelectMany(c =>
+                    {
+                        if (ModelState.TryGetValue(c.Name, out ModelStateEntry value))
+                        {
+                            var errors = value.Errors.Select(error => error.ErrorMessage);
+                            return errors;
+                        }
+                        return new List<string>();
+                    }).ToList()
+            };
+            return result;
         }
 
-        [HttpPost("transfer/{id}")]
-        public string Transfer(int id, [FromBody]int receiverId, [FromBody]double amount)
+        [HttpPost("transfer")]
+        public TransactionResult Transfer([FromBody]TransferViewModel transferViewModel)
         {
-            var account = _userService.GetById(id);
-            if (account == null)
-                return null;
-            if (account.Balance < amount)
-                return "Lack of money on the account to make transfer";
-            _transactionService.Transfer(id, receiverId, amount);
-            var newBalance = _userService.GetById(id).Balance;
-            return $"Rest: {newBalance}";
+            if (ModelState.IsValid)
+            {
+                _transactionService.Transfer(transferViewModel.UserId, transferViewModel.ReceiverId, transferViewModel.Amount);
+                var freshUserDetails = _userService.GetUserFullInfoById(transferViewModel.UserId);
+                return new TransactionResult { IsSuccessful = true, UserDetails = freshUserDetails };
+            }
+
+            var result =  new TransactionResult{
+                IsSuccessful = false,
+                ErrorMessages = typeof(TransferViewModel)
+                    .GetProperties()
+                    .SelectMany(c=>
+                    {
+                        if(ModelState.TryGetValue(c.Name, out ModelStateEntry value))
+                        {
+                            var errors =  value.Errors.Select(error => error.ErrorMessage);
+                            return errors;
+                        }
+                        return new List<string>();
+                    }).ToList()
+            };
+            return result;
+
+
+
         }
-
-
     }
 }

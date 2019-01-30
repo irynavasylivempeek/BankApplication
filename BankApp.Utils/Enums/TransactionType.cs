@@ -6,8 +6,8 @@ namespace BankApp.DTO.Enums
 {
     public enum TransactionType
     {
-        Withdraw,
-        Deposit,
-        Transfer
+        WithdrawTransaction,
+        DepositTransaction,
+        TransferTransaction
     }
 }

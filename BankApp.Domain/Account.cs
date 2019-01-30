@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using System.Transactions;
+using BankApp.Domain.Transactions;
 using Transaction = BankApp.Domain.Transactions.Transaction;
 
 namespace BankApp.Domain
@@ -15,8 +17,11 @@ namespace BankApp.Domain
         public int UserId { set; get; }
         public User User { set; get; }
 
-        public List<Transaction> Transactions { set; get; }   
-              
-        
+        [InverseProperty("Account")]
+        public List<Transaction> Transactions { set; get; }
+        [InverseProperty("Destination")]
+        public List<TransferTransaction> IncomingTransferTransactions { get; set; }
+
+
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using BankApp.Domain;
+using BankApp.Domain.Transactions;
 using Microsoft.EntityFrameworkCore;
 
 namespace BankApp.DAL.Repositories
@@ -21,8 +22,12 @@ namespace BankApp.DAL.Repositories
 
         public User GetIncludingAccount(Expression<Func<User, bool>> predicate)
         {
+           
             return _entities.Include(c => c.Account)
                 .ThenInclude(c => c.Transactions)
+                .Include(c=>c.Account)
+                .ThenInclude(c=>c.IncomingTransferTransactions)
+                .ThenInclude(c=>c.Account)
                 .SingleOrDefault(predicate);
         }
     }

@@ -29,5 +29,11 @@ namespace BankApp.Controllers
         {
             return _userService.Login(user).Succeed;
         }
+
+        [HttpGet("userInfo/{id}")]
+        public UserDto UserInfo(int id)
+        {
+            return _userService.GetUserFullInfoById(id);
+        }
     }
 }
