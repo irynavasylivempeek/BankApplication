@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Transactions;
 using BankApp.DAL.Repositories;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace BankApp.DAL
 {
@@ -10,6 +12,7 @@ namespace BankApp.DAL
         ITransactionRepository Transactions { get; }
         IUserRepository Users { get; }
         IAccountRepository Accounts { get; }
+        IDbContextTransaction BeginTransaction();
         int SaveChanges();
     }
     public class UnitOfWork : IUnitOfWork
@@ -30,6 +33,10 @@ namespace BankApp.DAL
 
         public IAccountRepository Accounts => _accounts ?? (_accounts = new AccountRepository(_context));
 
+        public IDbContextTransaction BeginTransaction()
+        {
+            return _context.Database.BeginTransaction();
+        }
         
         public int SaveChanges()
         {

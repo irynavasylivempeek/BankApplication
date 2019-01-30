@@ -28,30 +28,49 @@ namespace BankApp.BLL
         private void MakeTransaction(TransactionDto transactionInfo)
         {
             var account = _unitOfWork.Accounts.FindSingleOrDefault(c => c.UserId == transactionInfo.UserId);
-            switch (transactionInfo.Type)
+            using (var transaction = _unitOfWork.BeginTransaction())
             {
-                case TransactionType.Deposit:
-                    account.Balance += transactionInfo.Amount;
-                    _unitOfWork.Accounts.Update(account);
-                    _unitOfWork.Transactions.Add(new DepositTransaction() { AccountId = account.AccountId, Amount = transactionInfo.Amount });
-                    break;
+                try
+                {
+                    switch (transactionInfo.Type)
+                    {
+                        case TransactionType.Deposit:
+                            account.Balance += transactionInfo.Amount;
+                            _unitOfWork.Accounts.Update(account);
+                            _unitOfWork.Transactions.Add(new DepositTransaction()
+                                {AccountId = account.AccountId, Amount = transactionInfo.Amount});
+                            break;
 
-                case TransactionType.Withdraw:
-                    account.Balance -= transactionInfo.Amount;
-                    _unitOfWork.Accounts.Update(account);
-                    _unitOfWork.Transactions.Add(new WithdrawTransaction() { AccountId = account.AccountId, Amount = transactionInfo.Amount });
-                    break;
+                        case TransactionType.Withdraw:
+                            account.Balance -= transactionInfo.Amount;
+                            _unitOfWork.Accounts.Update(account);
+                            _unitOfWork.Transactions.Add(new WithdrawTransaction()
+                                {AccountId = account.AccountId, Amount = transactionInfo.Amount});
+                            break;
 
-                case TransactionType.Transfer:
-                    var receiver =
-                        _unitOfWork.Accounts.FindSingleOrDefault(c => c.UserId == transactionInfo.ReceiverId);
-                    receiver.Balance += transactionInfo.Amount;
-                    account.Balance -= transactionInfo.Amount;
-                    _unitOfWork.Accounts.UpdateRange(new List<Account>() { account, receiver });
-                    _unitOfWork.Transactions.Add(new TransferTransaction() { AccountId = account.AccountId, Amount = transactionInfo.Amount, DestinationId = transactionInfo.ReceiverId });
-                    break;
+                        case TransactionType.Transfer:
+                            var receiver =
+                                _unitOfWork.Accounts.FindSingleOrDefault(c => c.UserId == transactionInfo.ReceiverId);
+                            receiver.Balance += transactionInfo.Amount;
+                            account.Balance -= transactionInfo.Amount;
+                            _unitOfWork.Accounts.UpdateRange(new List<Account>() {account, receiver});
+                            _unitOfWork.Transactions.Add(new TransferTransaction()
+                            {
+                                AccountId = account.AccountId, Amount = transactionInfo.Amount,
+                                DestinationId = transactionInfo.ReceiverId
+                            });
+                            break;
+                    }
+
+                    _unitOfWork.SaveChanges();
+                    transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                }
             }
-            _unitOfWork.SaveChanges();
+            
         }
         public void Withdraw(int userId, double amount)
         {
