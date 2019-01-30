@@ -37,7 +37,7 @@ namespace BankApp.Controllers
                 return null;
             if (account.Balance < amount)
                 return "Lack of money on the account to withdraw";
-            _transactionService.Deposit(id, amount);
+            _transactionService.Withdraw(id, amount);
             var newBalance = _userService.GetById(id).Balance;
             return $"Rest: {newBalance}";
         }
