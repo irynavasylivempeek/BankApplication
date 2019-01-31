@@ -23,6 +23,7 @@ namespace BankApp.BLL
     {
         private readonly IAccountRepository _accountRepository;
         private readonly ITransactionRepository _transactionRepository;
+
         public TransactionService(IAccountRepository accountRepository, ITransactionRepository transactionRepository)
         {
             _accountRepository = accountRepository;
@@ -84,6 +85,5 @@ namespace BankApp.BLL
                 Type = c.Type
             });
         }
-
     }
 }

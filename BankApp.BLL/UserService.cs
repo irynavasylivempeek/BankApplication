@@ -22,12 +22,11 @@ namespace BankApp.BLL
         UserDto GetUserFullInfoById(int userId);
         bool Exists(int id);
         LoginResult Login(Login loginUser);
-        
-
     }
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+
         public UserService(IUserRepository userRepository)
         {
             _userRepository = userRepository;

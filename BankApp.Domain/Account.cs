@@ -22,7 +22,5 @@ namespace BankApp.Domain
 
         [InverseProperty("ReceiverAccount")]
         public List<Transaction> IncomingTransferTransactions { get; set; }
-
-
     }
 }
