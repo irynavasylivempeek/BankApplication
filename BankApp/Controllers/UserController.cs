@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BankApp.BLL;
 using BankApp.DTO;
+using BankApp.DTO.Users;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankApp.Controllers
@@ -19,15 +20,15 @@ namespace BankApp.Controllers
         }
 
         [HttpPost("register")]
-        public void Register([FromBody]LoginUser user)
+        public void Register([FromBody]Login user)
         {
             _userService.Add(user);
         }
 
         [HttpPost("login")]
-        public bool Login([FromBody] LoginUser user)
+        public LoginResult Login([FromBody] Login user)
         {
-            return _userService.Login(user).Succeed;
+            return _userService.Login(user);
         }
 
         [HttpGet("userInfo/{id}")]

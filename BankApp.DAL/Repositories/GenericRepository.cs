@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace BankApp.DAL.Repositories
 {
@@ -16,9 +17,11 @@ namespace BankApp.DAL.Repositories
         void Remove(TEntity entity);
         void RemoveRange(IEnumerable<TEntity> entities);
         IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> predicate);
-        TEntity FindSingleOrDefault(Expression<Func<TEntity, bool>> predicate);
+        TEntity SingleOrDefault(Expression<Func<TEntity, bool>> predicate);
         TEntity Find(int id);
         IEnumerable<TEntity> GetAll();
+        IDbContextTransaction BeginTransaction();
+        int SaveChanges();
     }
 
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
@@ -47,11 +50,11 @@ namespace BankApp.DAL.Repositories
             return _entities.Find(id);
         }
 
-        public TEntity FindSingleOrDefault(System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate)
+        public TEntity SingleOrDefault(System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate)
         {
             return _entities.SingleOrDefault(predicate);
         }
-
+        
         public IEnumerable<TEntity> Get(System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate)
         {
             return _entities.Where(predicate);
@@ -80,6 +83,15 @@ namespace BankApp.DAL.Repositories
         public void UpdateRange(IEnumerable<TEntity> entities)
         {
             _entities.UpdateRange(entities);
+        }
+        public IDbContextTransaction BeginTransaction()
+        {
+            return _context.Database.BeginTransaction();
+        }
+
+        public int SaveChanges()
+        {
+            return _context.SaveChanges();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace BankApp.DAL.Repositories
 {
     public interface ITransactionRepository : IGenericRepository<Transaction>
     {
-        IEnumerable<Transaction> GetIncludingAccount(Expression<Func<Transaction, bool>> predicate);
+        IEnumerable<Transaction> GetWithReceiver(Expression<Func<Transaction, bool>> predicate);
     }
     public class TransactionRepository : GenericRepository<Transaction>, ITransactionRepository
     {
@@ -19,10 +19,10 @@ namespace BankApp.DAL.Repositories
         {
         }
 
-        public IEnumerable<Transaction> GetIncludingAccount(Expression<Func<Transaction, bool>> predicate)
+        public IEnumerable<Transaction> GetWithReceiver(Expression<Func<Transaction, bool>> predicate)
         {
             return _entities
-                .Include(c => c.Account)
+                .Include(c => c.ReceiverAccount)
                 .ThenInclude(c => c.User)
                 .Where(predicate);
         }

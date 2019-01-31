@@ -4,9 +4,9 @@ using System.Text;
 
 namespace BankApp.DTO
 {
-    public class LoginUser
+    public class Login
     {
-        public string Login { set; get; }
+        public string UserName { set; get; }
         public string Password { set; get; }
     }
 }

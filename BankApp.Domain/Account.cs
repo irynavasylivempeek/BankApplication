@@ -17,10 +17,11 @@ namespace BankApp.Domain
         public int UserId { set; get; }
         public User User { set; get; }
 
-        [InverseProperty("Account")]
+        [InverseProperty("SenderAccount")]
         public List<Transaction> Transactions { set; get; }
-        [InverseProperty("Destination")]
-        public List<TransferTransaction> IncomingTransferTransactions { get; set; }
+
+        [InverseProperty("ReceiverAccount")]
+        public List<Transaction> IncomingTransferTransactions { get; set; }
 
 
     }

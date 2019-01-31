@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BankApp.DAL\BankApp.DAL.csproj" />
+    <ProjectReference Include="..\BankApp.Domain\BankApp.Domain.csproj" />
     <ProjectReference Include="..\BankApp.DTO\BankApp.DTO.csproj" />
   </ItemGroup>
 

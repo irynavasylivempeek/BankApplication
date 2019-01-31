@@ -8,7 +8,6 @@ namespace BankApp.DAL
     {
         public static void Initialize(BankContext context)
         {
-
         }
     }
 }

@@ -21,7 +21,7 @@ namespace BankApp.DAL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("BankApp.Domain.Account", b =>
+            modelBuilder.Entity("BankApp.Domain.SenderAccount", b =>
                 {
                     b.Property<int>("AccountId")
                         .ValueGeneratedOnAdd()
@@ -73,7 +73,7 @@ namespace BankApp.DAL.Migrations
                     b.Property<string>("Password")
                         .IsRequired();
 
-                    b.Property<string>("Salt")
+                    b.Property<string>("SaltBytes")
                         .IsRequired();
 
                     b.HasKey("UserId");
@@ -106,17 +106,17 @@ namespace BankApp.DAL.Migrations
                     b.HasDiscriminator().HasValue("WithdrawTransaction");
                 });
 
-            modelBuilder.Entity("BankApp.Domain.Account", b =>
+            modelBuilder.Entity("BankApp.Domain.SenderAccount", b =>
                 {
                     b.HasOne("BankApp.Domain.User", "User")
-                        .WithOne("Account")
-                        .HasForeignKey("BankApp.Domain.Account", "UserId")
+                        .WithOne("SenderAccount")
+                        .HasForeignKey("BankApp.Domain.SenderAccount", "UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("BankApp.Domain.Transactions.Transaction", b =>
                 {
-                    b.HasOne("BankApp.Domain.Account", "Account")
+                    b.HasOne("BankApp.Domain.SenderAccount", "SenderAccount")
                         .WithMany()
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -124,7 +124,7 @@ namespace BankApp.DAL.Migrations
 
             modelBuilder.Entity("BankApp.Domain.Transactions.TransferTransaction", b =>
                 {
-                    b.HasOne("BankApp.Domain.Account", "Destination")
+                    b.HasOne("BankApp.Domain.SenderAccount", "Destination")
                         .WithMany()
                         .HasForeignKey("DestinationId");
                 });

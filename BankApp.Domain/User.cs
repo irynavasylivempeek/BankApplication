@@ -9,9 +9,9 @@ namespace BankApp.Domain
     {
         [Key]
         public int UserId { set; get; }
-        public string Login { set; get; }
+        public string UserName { set; get; }
         public string Password { set; get; }
-        public string Salt { set; get; }
+        public byte[] Salt { set; get; }
         public Account Account { set; get; }
     }
 }

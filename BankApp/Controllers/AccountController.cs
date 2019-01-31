@@ -4,11 +4,10 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using BankApp.BLL;
+using BankApp.Domain.Enums;
 using BankApp.DTO;
 using BankApp.DTO.Transaction;
-using BankApp.ViewModel.TransactionsViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BankApp.Controllers
 {
@@ -24,89 +23,52 @@ namespace BankApp.Controllers
             _userService = userService;
         }
 
-        [HttpPost("deposite")]
-        public TransactionResult Deposite([FromBody]DepositeViewModel depositeViewModel)
+        [HttpPost("deposit")]
+        public TransactionResult Deposit([FromBody]TransactionDto transaction)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _transactionService.Deposit(depositeViewModel.UserId, depositeViewModel.Amount);
-                var freshUserDetails = _userService.GetUserFullInfoById(depositeViewModel.UserId);
-                return new TransactionResult {IsSuccessful = true, UserDetails = freshUserDetails};
+                transaction.Type = TransactionType.DepositTransaction;
+                _transactionService.MakeTransaction(transaction);
             }
-            var result = new TransactionResult
+            catch (Exception)
             {
-                IsSuccessful = false,
-                ErrorMessages = typeof(DepositeViewModel)
-                    .GetProperties()
-                    .SelectMany(c =>
-                    {
-                        if (ModelState.TryGetValue(c.Name, out ModelStateEntry value))
-                        {
-                            var errors = value.Errors.Select(error => error.ErrorMessage);
-                            return errors;
-                        }
-                        return new List<string>();
-                    }).ToList()
-            };
-            return result;
+                return new TransactionResult { Success = false };
+            }
+            var freshUserDetails = _userService.GetUserFullInfoById(transaction.SenderId);
+            return new TransactionResult { Success = true, UserDetails = freshUserDetails };
         }
 
         [HttpPost("withdraw")]
-
-        public TransactionResult Withdraw([FromBody]WithdrawViewModel withdrawViewModel)
+        public TransactionResult Withdraw([FromBody] TransactionDto transaction)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _transactionService.Withdraw(withdrawViewModel.UserId, withdrawViewModel.Amount);
-                var freshUserDetails = _userService.GetUserFullInfoById(withdrawViewModel.UserId);
-                return new TransactionResult { IsSuccessful = true, UserDetails = freshUserDetails };
+                transaction.Type = TransactionType.WithdrawTransaction;
+                _transactionService.MakeTransaction(transaction);
             }
-            var result = new TransactionResult
+            catch (Exception)
             {
-                IsSuccessful = false,
-                ErrorMessages = typeof(WithdrawViewModel)
-                    .GetProperties()
-                    .SelectMany(c =>
-                    {
-                        if (ModelState.TryGetValue(c.Name, out ModelStateEntry value))
-                        {
-                            var errors = value.Errors.Select(error => error.ErrorMessage);
-                            return errors;
-                        }
-                        return new List<string>();
-                    }).ToList()
-            };
-            return result;
+                return new TransactionResult { Success = false };
+            }
+            var freshUserDetails = _userService.GetUserFullInfoById(transaction.SenderId);
+            return new TransactionResult { Success = true, UserDetails = freshUserDetails };
         }
 
         [HttpPost("transfer")]
-        public TransactionResult Transfer([FromBody]TransferViewModel transferViewModel)
+        public TransactionResult Transfer([FromBody]TransactionDto transaction)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _transactionService.Transfer(transferViewModel.UserId, transferViewModel.ReceiverId, transferViewModel.Amount);
-                var freshUserDetails = _userService.GetUserFullInfoById(transferViewModel.UserId);
-                return new TransactionResult { IsSuccessful = true, UserDetails = freshUserDetails };
+                transaction.Type = TransactionType.TransferTransaction;
+                _transactionService.MakeTransaction(transaction);
             }
-
-            var result =  new TransactionResult{
-                IsSuccessful = false,
-                ErrorMessages = typeof(TransferViewModel)
-                    .GetProperties()
-                    .SelectMany(c=>
-                    {
-                        if(ModelState.TryGetValue(c.Name, out ModelStateEntry value))
-                        {
-                            var errors =  value.Errors.Select(error => error.ErrorMessage);
-                            return errors;
-                        }
-                        return new List<string>();
-                    }).ToList()
-            };
-            return result;
-
-
-
+            catch (Exception)
+            {
+                return new TransactionResult { Success = false };
+            }
+            var freshUserDetails = _userService.GetUserFullInfoById(transaction.SenderId);
+            return new TransactionResult { Success = true, UserDetails = freshUserDetails };
         }
     }
 }

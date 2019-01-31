@@ -1,13 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BankApp.DAL.Migrations
 {
-    public partial class AddSaltToUserTable : Migration
+    public partial class AddSaltByteArray : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "SaltBytes",
+            migrationBuilder.AddColumn<byte[]>(
+                name: "Salt",
                 table: "Users",
                 nullable: true);
         }
@@ -15,7 +16,7 @@ namespace BankApp.DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "SaltBytes",
+                name: "Salt",
                 table: "Users");
         }
     }

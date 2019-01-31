@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BankApp.DTO.Enums;
+﻿using BankApp.Domain.Enums;
 
-namespace BankApp.DTO
+namespace BankApp.DTO.Transaction
 {
     public class TransactionDto
     {
-        public int UserId { set; get; }
+        public int SenderId { set; get; }
         public int TransactionId { set; get; }
         public double Amount { set; get; }
-        public int ReceiverId { set; get; }
+        public int? ReceiverId { set; get; }
         public TransactionType Type { set; get; }
-
     }
 }

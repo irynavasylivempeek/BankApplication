@@ -4,10 +4,12 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using BankApp.DAL;
+using BankApp.DAL.Repositories;
 using BankApp.Domain;
+using BankApp.Domain.Enums;
 using BankApp.Domain.Transactions;
 using BankApp.DTO;
-using BankApp.DTO.Enums;
+using BankApp.DTO.Transaction;
 using BankApp.DTO.Users;
 using BankApp.Utils;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -16,79 +18,75 @@ namespace BankApp.BLL
 {
     public interface IUserService
     {
-        UserDto Add(LoginUser user);
+        UserDto Add(Login user);
         UserDto GetUserFullInfoById(int userId);
         bool Exists(int id);
-        LoginResult Login(LoginUser loginUser);
+        LoginResult Login(Login loginUser);
         
 
     }
     public class UserService : IUserService
     {
-        private readonly IUnitOfWork _unitOfWork;
-        public UserService(IUnitOfWork unitOfWork)
+        private readonly IUserRepository _userRepository;
+        public UserService(IUserRepository userRepository)
         {
-            _unitOfWork = unitOfWork;
+            _userRepository = userRepository;
         }
 
-        public UserDto Add(LoginUser user)
+        public UserDto Add(Login user)
         {
             var salt = SaltedHashGenerator.GenerateSalt();
-            var newUser = _unitOfWork.Users.Add(new User()
+            var newUser = _userRepository.Add(new User()
             {
-                Login = user.Login,
-                Password = SaltedHashGenerator.GenerateSaltedHash(salt, user.Password),
-                Salt = Convert.ToBase64String(salt),
+                UserName = user.UserName,
+                Password = SaltedHashGenerator.GenerateSaltedHash(user.Password, salt),
+                Salt = salt,
                 Account = new Account()
             });
-            _unitOfWork.SaveChanges();
+            _userRepository.SaveChanges();
             return new UserDto()
             {
                 UserId = newUser.UserId,
-                Login = newUser.Login,
+                UserName = newUser.UserName,
                 Balance = newUser.Account.Balance
             };
         }
 
         public UserDto GetUserFullInfoById(int userId)
         {
-            var user = _unitOfWork.Users.GetIncludingAccount(c => c.UserId == userId);
+            var user = _userRepository.GetWithTransactions(c => c.UserId == userId);
             if (user == null)
                 return null;
             return new UserDto()
             {
                 UserId = userId,
                 Balance = user.Account.Balance,
-                Login = user.Login,
-                Transactions = user.Account.Transactions.Union(user.Account.IncomingTransferTransactions).Select(c =>
+                UserName = user.UserName,
+                Transactions = user.Account.Transactions.Union(user.Account.IncomingTransferTransactions).Select(c => new TransactionDto()
                 {
-                    Enum.TryParse(c.GetType().ShortDisplayName(), out TransactionType type);
-                    return new TransactionDto()
-                    {
-                        UserId = c.Account.UserId,
-                        Amount = c.Amount,
-                        TransactionId = c.TransactionId,
-                        Type = type,
-                        ReceiverId = (c as TransferTransaction)?.DestinationId ?? 0
-                    };
+                    SenderId = c.SenderAccount.UserId,
+                    Amount = c.Amount,
+                    TransactionId = c.TransactionId,
+                    Type = c.Type,
+                    ReceiverId = c.ReceiverAccount?.UserId ?? 0,
                 }).ToList()
             };
         }
 
         public bool Exists(int id)
         {
-            return _unitOfWork.Users.Find(id) != null;
+            return _userRepository.Find(id) != null;
         }
-        public LoginResult Login(LoginUser loginUser)
+        public LoginResult Login(Login loginUser)
         {
-            var user = _unitOfWork.Users.FindSingleOrDefault(c => c.Login == loginUser.Login);
+            var user = _userRepository.SingleOrDefault(c => c.UserName == loginUser.UserName);
             if (user == null)
                 return new LoginResult()
                 {
                     Succeed = false,
                     ErrorMessage = "Wrong login"
                 };
-            bool valid = SaltedHashGenerator.ValidateHash(user.Password, loginUser.Password, Convert.FromBase64String(user.Salt));
+            bool valid = SaltedHashGenerator.VerifyHash(user.Password, loginUser.Password, user.Salt);
             if (valid)
                 return new LoginResult()
                 {
@@ -100,7 +98,6 @@ namespace BankApp.BLL
                 Succeed = false,
                 ErrorMessage = "Wrong password"
             };
-
         }
     }
 }

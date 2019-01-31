@@ -4,14 +4,16 @@ using BankApp.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BankApp.DAL.Migrations
 {
     [DbContext(typeof(BankContext))]
-    partial class BankContextModelSnapshot : ModelSnapshot
+    [Migration("20190131095849_ChangedTransactionsAndNamesOfProperties")]
+    partial class ChangedTransactionsAndNamesOfProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,7 +71,8 @@ namespace BankApp.DAL.Migrations
                     b.Property<string>("Password")
                         .IsRequired();
 
-                    b.Property<byte[]>("Salt");
+                    b.Property<string>("SaltBytes")
+                        .IsRequired();
 
                     b.Property<string>("UserName")
                         .IsRequired();

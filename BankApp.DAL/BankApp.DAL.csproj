@@ -11,6 +11,12 @@
     <Compile Remove="Migrations\20190128120438_Initial.cs" />
     <Compile Remove="Migrations\20190128121454_Initial.cs" />
     <Compile Remove="Migrations\20190130104544_AddedIncomingTransactionsToAccount.cs" />
+    <Compile Remove="Migrations\20190131120059_SaltFromStringToByteArray.cs" />
+    <Compile Remove="Migrations\20190131120806_SaltFromStringToByteArray.cs" />
+    <Compile Remove="Migrations\20190131122331_SaltFromStringToByteArray.cs" />
+    <Compile Remove="Migrations\20190131122523_RemovedSalt.cs" />
+    <Compile Remove="Migrations\20190131122552_AddSaltByteArray.cs" />
+    <Compile Remove="Migrations\20190131122643_RemovedSalt.cs" />
   </ItemGroup>
 
   <ItemGroup>

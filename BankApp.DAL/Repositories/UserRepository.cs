@@ -11,23 +11,22 @@ namespace BankApp.DAL.Repositories
 {
     public interface IUserRepository : IGenericRepository<User>
     {
-        User GetIncludingAccount(Expression<Func<User, bool>> predicate);
+        User GetWithTransactions(Expression<Func<User, bool>> predicate);
     }
+
     public class UserRepository : GenericRepository<User>,  IUserRepository
     {
         public UserRepository(BankContext context) : base(context)
         {
-            
         }
 
-        public User GetIncludingAccount(Expression<Func<User, bool>> predicate)
+        public User GetWithTransactions(Expression<Func<User, bool>> predicate)
         {
-           
             return _entities.Include(c => c.Account)
                 .ThenInclude(c => c.Transactions)
                 .Include(c=>c.Account)
                 .ThenInclude(c=>c.IncomingTransferTransactions)
-                .ThenInclude(c=>c.Account)
+                .ThenInclude(c=>c.SenderAccount)
                 .SingleOrDefault(predicate);
         }
     }

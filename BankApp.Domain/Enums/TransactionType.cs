@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BankApp.DTO.Enums
+﻿namespace BankApp.Domain.Enums
 {
     public enum TransactionType
     {

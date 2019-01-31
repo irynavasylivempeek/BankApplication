@@ -7,7 +7,7 @@ namespace BankApp.DAL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "Salt",
+                name: "SaltBytes",
                 table: "Users",
                 nullable: false,
                 oldClrType: typeof(string),
@@ -31,7 +31,7 @@ namespace BankApp.DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "Salt",
+                name: "SaltBytes",
                 table: "Users",
                 nullable: true,
                 oldClrType: typeof(string));
