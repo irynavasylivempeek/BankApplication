@@ -9,5 +9,6 @@ namespace BankApp.DTO.Users
         public bool Success { set; get; }
         public UserDetails User { set; get; }
         public string ErrorMessage { set; get; }
+        public string Token { set; get; }
     }
 }

@@ -33,6 +33,11 @@ namespace BankApp.Controllers
         public LoginResult Register([FromBody]Login user)
         {
             var registerResult = _userService.Add(user);
+            if (registerResult.Success)
+            {
+                var token = GenerateJsonWebToken(registerResult.User);
+                registerResult.Token = token;
+            }
             return registerResult;
         }
 
@@ -41,12 +46,12 @@ namespace BankApp.Controllers
         public IActionResult Login([FromBody] Login user)
         {
             IActionResult response = Unauthorized();
-            var registerResult = _userService.Login(user);
-
-            if (registerResult.Success)
+            var loginResult = _userService.Login(user);
+            if (loginResult.Success)
             {
-                var token = GenerateJsonWebToken(registerResult.User);
-                response = Ok(new { token = token, userId = registerResult.User.UserId });
+                var token = GenerateJsonWebToken(loginResult.User);
+                loginResult.Token = token;
+                response = Ok(loginResult);
             }
             return response;
         }
