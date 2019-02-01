@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using BankApp.BLL;
 using BankApp.DAL;
 using BankApp.DAL.Repositories;
@@ -28,7 +28,6 @@ namespace BankApp
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
@@ -44,6 +43,8 @@ namespace BankApp
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
+                    options.ClaimsIssuer = Configuration["Jwt:Issuer"];
+                    options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
@@ -52,6 +53,7 @@ namespace BankApp
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = Configuration["Jwt:Issuer"],
                         ValidAudience = Configuration["Jwt:Issuer"],
+                        
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                     };
                 });
@@ -63,7 +65,7 @@ namespace BankApp
                 {
                     Type = "oauth2",
                     Flow = "password",
-                    TokenUrl = "/connect/token"
+                    TokenUrl = "/api/user/login"
                 });
             });
 
@@ -81,11 +83,10 @@ namespace BankApp
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "BankApp API V1");
-
             });
-
-            app.UseMvc();
             app.UseAuthentication();
+            app.UseMvc();
+            
         }
     }
 }

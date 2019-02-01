@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 using BankApp.Domain.Enums;
 
-namespace BankApp.Domain.Transactions
+namespace BankApp.Domain
 {
     public class Transaction
     {

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using BankApp.Domain;
-using BankApp.Domain.Transactions;
 using Microsoft.EntityFrameworkCore;
 
 namespace BankApp.DAL.Repositories

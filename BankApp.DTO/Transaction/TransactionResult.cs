@@ -7,6 +7,6 @@ namespace BankApp.DTO.Transaction
     public class TransactionResult
     {
         public bool Success { set; get; }
-        public UserDto UserDetails { set; get; }
+        public UserDetails UserDetails { set; get; }
     }
 }

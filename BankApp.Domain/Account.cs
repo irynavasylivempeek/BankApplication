@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-using System.Transactions;
-using BankApp.Domain.Transactions;
-using Transaction = BankApp.Domain.Transactions.Transaction;
+using Transaction = BankApp.Domain.Transaction;
 
 namespace BankApp.Domain
 {

@@ -7,7 +7,6 @@ using BankApp.DAL;
 using BankApp.DAL.Repositories;
 using BankApp.Domain;
 using BankApp.Domain.Enums;
-using BankApp.Domain.Transactions;
 using BankApp.DTO;
 using BankApp.DTO.Transaction;
 using BankApp.DTO.Users;
@@ -18,8 +17,8 @@ namespace BankApp.BLL
 {
     public interface IUserService
     {
-        UserDto Add(Login user);
-        UserDto GetUserFullInfoById(int userId);
+        LoginResult Add(Login user);
+        UserDetails GetUserFullInfoById(int userId);
         bool Exists(int id);
         LoginResult Login(Login loginUser);
     }
@@ -32,8 +31,14 @@ namespace BankApp.BLL
             _userRepository = userRepository;
         }
 
-        public UserDto Add(Login user)
+        public LoginResult Add(Login user)
         {
+            if (_userRepository.SingleOrDefault(c => c.UserName == user.UserName) != null)
+                return new LoginResult()
+                {
+                    Success = false,
+                    ErrorMessage = "There is a user with the same UserName"
+                };
             var salt = SaltedHashGenerator.GenerateSalt();
             var newUser = _userRepository.Add(new User()
             {
@@ -43,25 +48,29 @@ namespace BankApp.BLL
                 Account = new Account()
             });
             _userRepository.SaveChanges();
-            return new UserDto()
+            return new LoginResult()
             {
-                UserId = newUser.UserId,
-                UserName = newUser.UserName,
-                Balance = newUser.Account.Balance
+                Success = true,
+                User = new UserDetails()
+                {
+                    UserId = newUser.UserId,
+                    UserName = newUser.UserName,
+                    Balance = newUser.Account.Balance
+                }
             };
         }
 
-        public UserDto GetUserFullInfoById(int userId)
+        public UserDetails GetUserFullInfoById(int userId)
         {
             var user = _userRepository.GetWithTransactions(c => c.UserId == userId);
             if (user == null)
                 return null;
-            return new UserDto()
+            return new UserDetails()
             {
                 UserId = userId,
                 Balance = user.Account.Balance,
                 UserName = user.UserName,
-                Transactions = user.Account.Transactions.Union(user.Account.IncomingTransferTransactions).Select(c => new TransactionDto()
+                Transactions = user.Account.Transactions.Union(user.Account.IncomingTransferTransactions).Select(c => new TransactionDetails()
                 {
                     SenderId = c.SenderAccount.UserId,
                     Amount = c.Amount,
@@ -78,23 +87,28 @@ namespace BankApp.BLL
         }
         public LoginResult Login(Login loginUser)
         {
-            var user = _userRepository.SingleOrDefault(c => c.UserName == loginUser.UserName);
+            var user = _userRepository.GetWithTransactions(c => c.UserName == loginUser.UserName);
             if (user == null)
                 return new LoginResult()
                 {
-                    Succeed = false,
+                    Success = false,
                     ErrorMessage = "Wrong login"
                 };
             bool valid = SaltedHashGenerator.VerifyHash(user.Password, loginUser.Password, user.Salt);
             if (valid)
                 return new LoginResult()
                 {
-                    UserId = user.UserId,
-                    Succeed = true
+                    User = new UserDetails()
+                    {
+                        UserId = user.UserId,
+                        Balance = user.Account.Balance,
+                        UserName = user.UserName
+                    },
+                    Success = true
                 };
             return new LoginResult()
             {
-                Succeed = false,
+                Success = false,
                 ErrorMessage = "Wrong password"
             };
         }

@@ -6,7 +6,6 @@ using BankApp.DAL;
 using BankApp.DAL.Repositories;
 using BankApp.Domain;
 using BankApp.Domain.Enums;
-using BankApp.Domain.Transactions;
 using BankApp.DTO;
 using BankApp.DTO.Transaction;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -15,8 +14,8 @@ namespace BankApp.BLL
 {
     public interface ITransactionService
     {
-        void MakeTransaction(TransactionDto transactionDto);
-        IEnumerable<TransactionDto> GetAllByUserId(int userId, int page);
+        void MakeTransaction(TransactionDetails transactionDto);
+        IEnumerable<TransactionDetails> GetAllByUserId(int userId, int page);
     }
 
     public class TransactionService : ITransactionService
@@ -30,7 +29,7 @@ namespace BankApp.BLL
             _transactionRepository = transactionRepository;
         }
 
-        public void MakeTransaction(TransactionDto transactionDto)
+        public void MakeTransaction(TransactionDetails transactionDto)
         {
             var senderAccount = _accountRepository.SingleOrDefault(c => c.UserId == transactionDto.SenderId);
             Account receiverAccount = null;
@@ -74,10 +73,10 @@ namespace BankApp.BLL
             }
         }
        
-        public IEnumerable<TransactionDto> GetAllByUserId(int userId, int page)
+        public IEnumerable<TransactionDetails> GetAllByUserId(int userId, int page)
         {
             var userTransactions = _transactionRepository.GetWithReceiver(c => c.SenderAccount.UserId == userId);
-            return userTransactions.Select(c => new TransactionDto()
+            return userTransactions.Select(c => new TransactionDetails()
             {
                 SenderId = c.SenderAccount.UserId,
                 Amount = c.Amount,

@@ -9,11 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankApp.Domain", "BankApp.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankApp.DAL", "BankApp.DAL\BankApp.DAL.csproj", "{61D6F973-97FE-4A92-8F22-C4FEE453765C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankApp.BLL", "BankApp.BLL\BankApp.BLL.csproj", "{57185D6B-1698-4854-B07F-A578553EA7E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankApp.BLL", "BankApp.BLL\BankApp.BLL.csproj", "{57185D6B-1698-4854-B07F-A578553EA7E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankApp.DTO", "BankApp.DTO\BankApp.DTO.csproj", "{26BC2B5A-52DA-4A95-964A-B30CE76F8B15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankApp.DTO", "BankApp.DTO\BankApp.DTO.csproj", "{26BC2B5A-52DA-4A95-964A-B30CE76F8B15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankApp.Utils", "BankApp.Utils\BankApp.Utils.csproj", "{4B2375F4-691B-448D-B466-CA9BC684BB20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankApp.Utils", "BankApp.Utils\BankApp.Utils.csproj", "{4B2375F4-691B-448D-B466-CA9BC684BB20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

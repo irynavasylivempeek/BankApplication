@@ -2,7 +2,7 @@
 
 namespace BankApp.DTO.Transaction
 {
-    public class TransactionDto
+    public class TransactionDetails
     {
         public int SenderId { set; get; }
         public int TransactionId { set; get; }

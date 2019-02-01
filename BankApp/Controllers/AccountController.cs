@@ -7,11 +7,13 @@ using BankApp.BLL;
 using BankApp.Domain.Enums;
 using BankApp.DTO;
 using BankApp.DTO.Transaction;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankApp.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     public class AccountController : Controller
     {
         private readonly ITransactionService _transactionService;
@@ -24,7 +26,7 @@ namespace BankApp.Controllers
         }
 
         [HttpPost("deposit")]
-        public TransactionResult Deposit([FromBody]TransactionDto transaction)
+        public TransactionResult Deposit([FromBody]TransactionDetails transaction)
         {
             try
             {
@@ -40,7 +42,7 @@ namespace BankApp.Controllers
         }
 
         [HttpPost("withdraw")]
-        public TransactionResult Withdraw([FromBody] TransactionDto transaction)
+        public TransactionResult Withdraw([FromBody] TransactionDetails transaction)
         {
             try
             {
@@ -56,7 +58,7 @@ namespace BankApp.Controllers
         }
 
         [HttpPost("transfer")]
-        public TransactionResult Transfer([FromBody]TransactionDto transaction)
+        public TransactionResult Transfer([FromBody]TransactionDetails transaction)
         {
             try
             {
