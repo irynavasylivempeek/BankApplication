@@ -15,7 +15,7 @@ namespace BankApp.Utils
         public static byte[] GenerateSalt()
         {
             byte[] salt = new byte[SaltSizeInBytes];
-            using (var rng = RandomNumberGenerator.Create())
+            using (var rng = new RNGCryptoServiceProvider())
             {
                 rng.GetBytes(salt);
             }

@@ -28,41 +28,28 @@ namespace BankApp.Controllers
         [HttpPost("deposit")]
         public TransactionResult Deposit([FromBody]TransactionDetails transaction)
         {
-            try
-            {
-                transaction.Type = TransactionType.DepositTransaction;
-                _transactionService.MakeTransaction(transaction);
-            }
-            catch (Exception)
-            {
-                return new TransactionResult { Success = false };
-            }
-            var freshUserDetails = _userService.GetUserFullInfoById(transaction.SenderId);
-            return new TransactionResult { Success = true, UserDetails = freshUserDetails };
+            transaction.Type = TransactionType.DepositTransaction;
+            return MakeTransaction(transaction);
         }
 
         [HttpPost("withdraw")]
         public TransactionResult Withdraw([FromBody] TransactionDetails transaction)
         {
-            try
-            {
-                transaction.Type = TransactionType.WithdrawTransaction;
-                _transactionService.MakeTransaction(transaction);
-            }
-            catch (Exception)
-            {
-                return new TransactionResult { Success = false };
-            }
-            var freshUserDetails = _userService.GetUserFullInfoById(transaction.SenderId);
-            return new TransactionResult { Success = true, UserDetails = freshUserDetails };
+            transaction.Type = TransactionType.WithdrawTransaction;
+            return MakeTransaction(transaction);
         }
 
         [HttpPost("transfer")]
         public TransactionResult Transfer([FromBody]TransactionDetails transaction)
         {
+            transaction.Type = TransactionType.TransferTransaction;
+            return MakeTransaction(transaction);
+        }
+
+        private TransactionResult MakeTransaction(TransactionDetails transaction)
+        {
             try
             {
-                transaction.Type = TransactionType.TransferTransaction;
                 _transactionService.MakeTransaction(transaction);
             }
             catch (Exception)

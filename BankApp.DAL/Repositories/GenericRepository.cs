@@ -84,6 +84,7 @@ namespace BankApp.DAL.Repositories
         {
             _entities.UpdateRange(entities);
         }
+
         public IDbContextTransaction BeginTransaction()
         {
             return _context.Database.BeginTransaction();

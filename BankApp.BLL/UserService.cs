@@ -22,6 +22,7 @@ namespace BankApp.BLL
         bool Exists(int id);
         LoginResult Login(Login loginUser);
     }
+
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
@@ -85,6 +86,7 @@ namespace BankApp.BLL
         {
             return _userRepository.Find(id) != null;
         }
+
         public LoginResult Login(Login loginUser)
         {
             var user = _userRepository.GetWithTransactions(c => c.UserName == loginUser.UserName);
@@ -95,21 +97,16 @@ namespace BankApp.BLL
                     ErrorMessage = "Wrong login"
                 };
             bool valid = SaltedHashGenerator.VerifyHash(user.Password, loginUser.Password, user.Salt);
-            if (valid)
-                return new LoginResult()
-                {
-                    User = new UserDetails()
-                    {
-                        UserId = user.UserId,
-                        Balance = user.Account.Balance,
-                        UserName = user.UserName
-                    },
-                    Success = true
-                };
             return new LoginResult()
             {
-                Success = false,
-                ErrorMessage = "Wrong password"
+                User = valid ? new UserDetails()
+                {
+                    UserId = user.UserId,
+                    Balance = user.Account.Balance,
+                    UserName = user.UserName
+                } : null,
+                ErrorMessage = valid ? null : "Wrong password",
+                Success = valid
             };
         }
     }

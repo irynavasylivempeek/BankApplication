@@ -13,6 +13,7 @@ namespace BankApp.DAL
         public DbSet<User> Users { set; get; }
         public DbSet<Account> Accounts { set; get; }
         public DbSet<Transaction> Transactions { set; get; }
+
         public BankContext(DbContextOptions<BankContext> options)
             : base(options)
         {

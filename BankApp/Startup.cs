@@ -34,11 +34,7 @@ namespace BankApp
 
             services.AddDbContext<BankContext>(options => options.UseSqlServer(connection));
 
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<ITransactionRepository, TransactionRepository>();
-            services.AddScoped<IAccountRepository, AccountRepository>();
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<ITransactionService, TransactionService>();
+            services.ConfigureDependencyInjection();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

@@ -12,6 +12,7 @@ namespace BankApp.DAL.Repositories
     {
         IEnumerable<Transaction> GetWithReceiver(Expression<Func<Transaction, bool>> predicate);
     }
+
     public class TransactionRepository : GenericRepository<Transaction>, ITransactionRepository
     {
 
