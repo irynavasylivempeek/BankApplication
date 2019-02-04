@@ -1,0 +1,21 @@
+.header-nav {
+  box-shadow: 0 0 10px rgba(0,0,0,.3);
+  padding: 20px 0;
+}
+.logo{
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.header-nav .container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.nav:before, .container:before, .container:after, .nav:after {
+  content: none;
+}
+.btn-info{
+  margin-right: 10px;
+}

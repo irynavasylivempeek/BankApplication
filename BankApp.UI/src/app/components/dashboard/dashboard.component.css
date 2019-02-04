@@ -1,0 +1,29 @@
+.form-elem {
+  margin-right: 15px;
+}
+
+.input-group-addon {
+  padding: 4px 12px;
+}
+
+.profit-elem {
+  padding-left: 10px;
+  color: #0fbf0f;
+}
+
+.profit-elem:before {
+  content: "+";
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.loss-elem {
+  padding-left: 10px;
+  color: red;
+}
+
+.loss-elem:before {
+  content: "-";
+  font-size: 14px;
+  font-weight: 700;
+}

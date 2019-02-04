@@ -1,0 +1,35 @@
+.title {
+  text-align: center;
+}
+
+.login-form {
+  width: 400px;
+  margin: 50px auto 0;
+  padding: 30px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .3);
+}
+
+.login-form * {
+  width: 100%;
+}
+
+.login-form button {
+  width: auto;
+  border: none;
+  background: crimson;
+  margin: 20px auto 0;
+  display: block;
+  border-radius: 5px;
+  padding: 5px 20px;
+  color: white;
+}
+.login-form input{
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .3);
+  padding: 7px;
+}
+.login-form label{
+  margin: 10px 0;
+}

@@ -1,0 +1,9 @@
+<form #myForm="ngForm" (submit)="register()" class="login-form">
+  <h2 class="title">Register</h2>
+  <label for="UserName">Enter login</label>
+  <input name="UserName" #userName="ngModel" type="text" id="UserName" [(ngModel)]="user.userName"/>
+  <label for="Password">Enter password</label>
+  <input name="Password" #password="ngModel" type="password" id="Password" [(ngModel)]="user.password"/>
+  {{error}}
+  <button type="submit">Register</button>
+</form>
