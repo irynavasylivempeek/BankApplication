@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BankApp.DTO.Transaction;
+﻿using System.Collections.Generic;
+using BankApp.DTO.Transactions;
 
-namespace BankApp.DTO
+namespace BankApp.DTO.Users
 {
-    public class UserDetails
+    public class User
     {
         public int UserId { set; get; }
         public string UserName { set; get; }

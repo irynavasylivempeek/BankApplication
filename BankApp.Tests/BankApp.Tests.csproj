@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
+    <PackageReference Include="Moq" Version="4.10.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.2.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BankApp.BLL\BankApp.BLL.csproj" />
+    <ProjectReference Include="..\BankApp.Domain\BankApp.Domain.csproj" />
+    <ProjectReference Include="..\BankApp.DTO\BankApp.DTO.csproj" />
+    <ProjectReference Include="..\BankApp\BankApp.csproj" />
+  </ItemGroup>
+
+</Project>

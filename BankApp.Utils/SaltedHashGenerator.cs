@@ -22,23 +22,11 @@ namespace BankApp.Utils
             return salt;
         }
 
-        private static byte[] MergeByteArrays(byte[] byteArray1, byte[] byteArray2)
-        {
-            byte[] newByteArray = new byte[byteArray1.Length + byteArray2.Length];
-
-            for (int i = 0; i < byteArray1.Length; i++)
-                newByteArray[i] = byteArray1[i];
-
-            for (int i = 0; i < byteArray2.Length; i++)
-                newByteArray[byteArray1.Length + i] = byteArray2[i];
-            return newByteArray;
-        }
-
         public static string GenerateSaltedHash(string password, byte[] saltBytes)
         {
             byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
             byte[] hashBytes = _md5.ComputeHash(passwordBytes);
-            byte[] hashWithSaltBytes = MergeByteArrays(hashBytes, saltBytes);
+            byte[] hashWithSaltBytes = hashBytes.Concat(saltBytes).ToArray();
             string resultHashWithSalt = Convert.ToBase64String(_md5.ComputeHash(hashWithSaltBytes));
             return resultHashWithSalt;
         }

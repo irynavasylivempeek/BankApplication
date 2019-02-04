@@ -43,33 +43,39 @@ namespace BankApp.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public IActionResult Login([FromBody] Login user)
+        public LoginResult Login([FromBody] Login user)
         {
-            IActionResult response = Unauthorized();
             var loginResult = _userService.Login(user);
             if (loginResult.Success)
             {
                 var token = GenerateJsonWebToken(loginResult.User);
                 loginResult.Token = token;
-                response = Ok(loginResult);
             }
-            return response;
+            return loginResult;
         }
 
-        [HttpGet("userInfo/{id}")]
-        public UserDetails UserInfo(int id)
+        [HttpGet("userInfo")]
+        public User UserInfo()
         {
-            return _userService.GetUserFullInfoById(id);
+            var id = Int32.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            return _userService.GetFullInfoById(id);
         }
 
-        private string GenerateJsonWebToken(UserDetails user)
+        [HttpGet("getAll")]
+        public IEnumerable<User> GetAll()
+        {
+            var id = Int32.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            return _userService.GetAll().Where(c=>c.UserId!=id);
+        }
+
+        private string GenerateJsonWebToken(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var expiryTime = DateTime.Now + new TimeSpan(0, int.Parse(_config["Jwt:ExpiryInMinutes"]), 0);
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName)
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString())
             };
 
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],

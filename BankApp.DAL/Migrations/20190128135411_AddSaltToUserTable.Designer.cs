@@ -78,14 +78,14 @@ namespace BankApp.DAL.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("BankApp.Domain.Transactions.DepositTransaction", b =>
+            modelBuilder.Entity("BankApp.Domain.Transactions.Deposit", b =>
                 {
                     b.HasBaseType("BankApp.Domain.Transactions.Transaction");
 
-                    b.HasDiscriminator().HasValue("DepositTransaction");
+                    b.HasDiscriminator().HasValue("Deposit");
                 });
 
-            modelBuilder.Entity("BankApp.Domain.Transactions.TransferTransaction", b =>
+            modelBuilder.Entity("BankApp.Domain.Transactions.Transfer", b =>
                 {
                     b.HasBaseType("BankApp.Domain.Transactions.Transaction");
 
@@ -93,14 +93,14 @@ namespace BankApp.DAL.Migrations
 
                     b.HasIndex("DestinationId");
 
-                    b.HasDiscriminator().HasValue("TransferTransaction");
+                    b.HasDiscriminator().HasValue("Transfer");
                 });
 
-            modelBuilder.Entity("BankApp.Domain.Transactions.WithdrawTransaction", b =>
+            modelBuilder.Entity("BankApp.Domain.Transactions.Withdraw", b =>
                 {
                     b.HasBaseType("BankApp.Domain.Transactions.Transaction");
 
-                    b.HasDiscriminator().HasValue("WithdrawTransaction");
+                    b.HasDiscriminator().HasValue("Withdraw");
                 });
 
             modelBuilder.Entity("BankApp.Domain.SenderAccount", b =>
@@ -119,7 +119,7 @@ namespace BankApp.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("BankApp.Domain.Transactions.TransferTransaction", b =>
+            modelBuilder.Entity("BankApp.Domain.Transactions.Transfer", b =>
                 {
                     b.HasOne("BankApp.Domain.SenderAccount", "Destination")
                         .WithMany()

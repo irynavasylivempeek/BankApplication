@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BankApp
 {
-    public static class ServicesConfigurationExtension
+    public static class DiConfiguration
     {
         public static void ConfigureDependencyInjection(this IServiceCollection services)
         {

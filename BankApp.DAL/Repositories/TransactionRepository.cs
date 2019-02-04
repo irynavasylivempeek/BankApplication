@@ -23,6 +23,8 @@ namespace BankApp.DAL.Repositories
         public IEnumerable<Transaction> GetWithReceiver(Expression<Func<Transaction, bool>> predicate)
         {
             return _entities
+                .Include(c=>c.SenderAccount)
+                .ThenInclude(c=>c.User)
                 .Include(c => c.ReceiverAccount)
                 .ThenInclude(c => c.User)
                 .Where(predicate);

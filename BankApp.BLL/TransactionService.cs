@@ -6,16 +6,17 @@ using BankApp.DAL;
 using BankApp.DAL.Repositories;
 using BankApp.Domain;
 using BankApp.Domain.Enums;
-using BankApp.DTO;
-using BankApp.DTO.Transaction;
+using BankApp.DTO.Transactions;
 using Microsoft.EntityFrameworkCore.Internal;
+using Transaction = BankApp.DTO.Transactions.Transaction;
+using User = BankApp.DTO.Users.User;
 
 namespace BankApp.BLL
 {
     public interface ITransactionService
     {
-        void MakeTransaction(TransactionDetails transactionDto);
-        IEnumerable<TransactionDetails> GetAllByUserId(int userId, int page);
+        void MakeTransaction(Transaction transactionDto);
+        IEnumerable<TransactionDetails> GetAllByUserId(int userId);
     }
 
     public class TransactionService : ITransactionService
@@ -29,33 +30,32 @@ namespace BankApp.BLL
             _transactionRepository = transactionRepository;
         }
 
-        public void MakeTransaction(TransactionDetails transactionDto)
+        public void MakeTransaction(Transaction transactionDto)
         {
             var senderAccount = _accountRepository.SingleOrDefault(c => c.UserId == transactionDto.SenderId);
             Account receiverAccount = null;
+            int transactionDirection = 1;
             using (var transaction = _accountRepository.BeginTransaction())
             {
                 try
                 {
                     switch (transactionDto.Type)
                     {
-                        case TransactionType.DepositTransaction:
-                            senderAccount.Balance += transactionDto.Amount;
+                        case TransactionType.Withdraw:
+                            transactionDirection = -1;
                             break;
 
-                        case TransactionType.WithdrawTransaction:
-                            senderAccount.Balance -= transactionDto.Amount;
-                            break;
-
-                        case TransactionType.TransferTransaction:
+                        case TransactionType.Transfer:
                             receiverAccount =
                                 _accountRepository.SingleOrDefault(c => c.UserId == transactionDto.ReceiverId);
                             receiverAccount.Balance += transactionDto.Amount;
-                            senderAccount.Balance -= transactionDto.Amount;
+                            transactionDirection = -1;
                             _accountRepository.Update(receiverAccount);
                             break;
                     }
-                    _transactionRepository.Add(new Transaction()
+
+                    senderAccount.Balance += transactionDto.Amount * transactionDirection;
+                    _transactionRepository.Add(new Domain.Transaction()
                     {
                         SenderAccountId = senderAccount.AccountId,
                         Amount = transactionDto.Amount,
@@ -73,12 +73,21 @@ namespace BankApp.BLL
             }
         }
        
-        public IEnumerable<TransactionDetails> GetAllByUserId(int userId, int page)
+        public IEnumerable<TransactionDetails> GetAllByUserId(int userId)
         {
             var userTransactions = _transactionRepository.GetWithReceiver(c => c.SenderAccount.UserId == userId);
             return userTransactions.Select(c => new TransactionDetails()
             {
-                SenderId = c.SenderAccount.UserId,
+                Sender = new User
+                {
+                    UserId = c.SenderAccount.UserId,
+                    UserName = c.SenderAccount.User.UserName
+                },
+                Receiver = c.ReceiverAccountId == null ? null : new User
+                {
+                    UserId = c.ReceiverAccount.UserId,
+                    UserName = c.ReceiverAccount.User.UserName
+                },
                 Amount = c.Amount,
                 TransactionId = c.TransactionId,
                 Type = c.Type

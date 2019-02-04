@@ -1,8 +1,8 @@
 ﻿using BankApp.Domain.Enums;
 
-namespace BankApp.DTO.Transaction
+namespace BankApp.DTO.Transactions
 {
-    public class TransactionDetails
+    public class Transaction
     {
         public int SenderId { set; get; }
         public int TransactionId { set; get; }

@@ -23,9 +23,12 @@ namespace BankApp.DAL.Repositories
         {
             return _entities.Include(c => c.Account)
                 .ThenInclude(c => c.Transactions)
+                .ThenInclude(c=>c.ReceiverAccount)
+                .ThenInclude(c=>c.User)
                 .Include(c=>c.Account)
                 .ThenInclude(c=>c.IncomingTransferTransactions)
                 .ThenInclude(c=>c.SenderAccount)
+                .ThenInclude(c=>c.User)
                 .SingleOrDefault(predicate);
         }
     }
