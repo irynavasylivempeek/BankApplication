@@ -1,8 +1,9 @@
-import {Transaction} from './transaction.model';
+import Transaction from './transaction.model';
+import TransactionDetails from './transaction-details.model';
 
-export class User {
+export default class User {
   userId: number;
   userName: string;
   balance: number;
-  transactions: any;
+  transactions: Transaction | TransactionDetails;
 }

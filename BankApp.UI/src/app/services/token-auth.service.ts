@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-
-import { DataSharingService } from './data-sharing.service';
+import { BehaviorSubject } from 'rxjs/index';
 
 const TOKEN = 'TOKEN';
 
@@ -8,12 +7,16 @@ const TOKEN = 'TOKEN';
   providedIn: 'root'
 })
 
-export class LocalStorageService {
-  constructor(private dataSharingService: DataSharingService) { }
+export class TokenAuthService {
+  public isLogged: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  constructor() {
+    this.isLogged.next(this.hasToken());
+  }
 
   setToken(token: string) {
     localStorage.setItem(TOKEN, token);
-    this.dataSharingService.isLogged.next(true);
+    this.isLogged.next(true);
   }
 
   getToken() {
@@ -22,7 +25,7 @@ export class LocalStorageService {
 
   removeToken() {
     localStorage.removeItem(TOKEN);
-    this.dataSharingService.isLogged.next(false);
+    this.isLogged.next(false);
   }
 
   hasToken() {

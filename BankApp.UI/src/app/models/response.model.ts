@@ -1,6 +1,6 @@
 import User from './user.model';
 
-export class LoginResult {
+export class Response {
   success: boolean;
   errorMessage: string;
   user: User;

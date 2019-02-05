@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {UserService} from '../../services/user.service';
-import {Router} from '@angular/router';
-import {DataSharingService} from '../../services/data-sharing.service';
+import { Router } from '@angular/router';
+
+import { TokenAuthService } from '../../services/token-auth.service';
 
 @Component({
   selector: 'app-header',
@@ -9,21 +9,19 @@ import {DataSharingService} from '../../services/data-sharing.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
+
   isLogged: boolean;
-  constructor(private userService: UserService, private router: Router, private dataSharingService: DataSharingService) {
-    this.dataSharingService.isLogged.subscribe( value => {
+
+  constructor(private router: Router, private tokenAuthService: TokenAuthService) {
+    this.tokenAuthService.isLogged.subscribe( value => {
       this.isLogged = value;
     });
   }
 
-  ngOnInit() {
+  ngOnInit() { }
 
-  }
   logout() {
-    this.userService.logout();
+    this.tokenAuthService.removeToken();
     this.router.navigateByUrl('/login');
-    this.dataSharingService.isLogged.next(false);
   }
-
-
 }

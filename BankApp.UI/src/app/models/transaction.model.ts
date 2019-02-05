@@ -1,4 +1,4 @@
-export class Transaction {
+export default class Transaction {
   senderId: number;
   receiverId: number;
   type: number;

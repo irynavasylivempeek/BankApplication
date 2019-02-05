@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import {UserService} from './services/user.service';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
+
+import { TokenAuthService } from './services/token-auth.service';
 
 @Component({
   selector: 'app-root',
@@ -9,10 +10,11 @@ import {Router} from '@angular/router';
 })
 
 export class AppComponent {
-  constructor(private userService: UserService, private router: Router) {
+  constructor(private tokenAuthService: TokenAuthService, private router: Router) {
   }
+
   ngOnInit () {
-    if (this.userService.isLogged()) {
+    if (this.tokenAuthService.hasToken()) {
       this.router.navigateByUrl('/dashboard');
     } else {
       this.router.navigateByUrl('/login');

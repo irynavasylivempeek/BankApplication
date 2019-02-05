@@ -43,7 +43,7 @@ namespace BankApp.BLL
                     ErrorMessage = "There is a user with the same login"
                 };
             var salt = SaltedHashGenerator.GenerateSalt();
-            var newUser = _userRepository.Add(new Domain.User()
+            var newUser = _userRepository.Add(new Domain.User
             {
                 UserName = loginUser.UserName,
                 Password = SaltedHashGenerator.GenerateSaltedHash(loginUser.Password, salt),
@@ -96,7 +96,7 @@ namespace BankApp.BLL
 
         public LoginResult Login(Login loginUser)
         {
-            var user = _userRepository.GetWithTransactions(c => c.UserName == loginUser.UserName);
+            var user = _userRepository.SingleOrDefault(c => c.UserName == loginUser.UserName);
             if (user == null)
                 return new LoginResult()
                 {
@@ -109,7 +109,6 @@ namespace BankApp.BLL
                 User = valid ? new User()
                 {
                     UserId = user.UserId,
-                    Balance = user.Account.Balance,
                     UserName = user.UserName
                 } : null,
                 ErrorMessage = valid ? null : "Wrong password",

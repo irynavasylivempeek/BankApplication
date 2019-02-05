@@ -11,8 +11,6 @@ import {JwtInterceptor} from './interceptors/jwt.interceptor';
 import {ErrorInterceptor} from './interceptors/error.interceptor';
 import { HeaderComponent } from './components/header/header.component';
 
-const TOKEN = 'TOKEN';
-
 @NgModule({
   declarations: [
     AppComponent,

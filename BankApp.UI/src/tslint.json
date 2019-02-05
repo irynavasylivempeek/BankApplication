@@ -12,6 +12,12 @@
             "element",
             "app",
             "kebab-case"
-        ]
-    }
+        ],
+        "padding-line-between-statements": [
+          "error",
+          { "blankLine": "always", "prev": "function", "next": "function" }
+        ],
+        "tir-newline-after-import": [true, "never"],
+        "tir-spaces-within-import": [true]
+      }
 }
