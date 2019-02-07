@@ -74,24 +74,27 @@ namespace BankApp.BLL
                 UserId = user.UserId,
                 Balance = user.Account.Balance,
                 UserName = user.UserName,
-                Transactions = user.Account.Transactions.Union(user.Account.IncomingTransferTransactions).Select(c => new TransactionDetails()
-                {
-                    Sender = new User
+                Transactions = user.Account.Transactions
+                    .Union(user.Account.IncomingTransferTransactions)
+                    .OrderByDescending(c => c.TransactionId)
+                    .Select(c => new TransactionDetails()
                     {
-                        UserId = c.SenderAccount.UserId,
-                        UserName = c.SenderAccount.User.UserName
-                    },
-                    Receiver = c.ReceiverAccountId == null ? null : new User
-                    {
-                        UserId = c.ReceiverAccount.UserId,
-                        UserName = c.ReceiverAccount.User.UserName
-                    },
-                    Amount = c.Amount,
-                    TransactionId = c.TransactionId,
-                    Type = c.Type,
-                    TypeDescription = c.Type.ToString(),
-                    Income = c.Type == TransactionType.Deposit || c.Type == TransactionType.Transfer && c.ReceiverAccountId == user.Account.AccountId
-                }).ToList()
+                        Sender = new User
+                        {
+                            UserId = c.SenderAccount.UserId,
+                            UserName = c.SenderAccount.User.UserName
+                        },
+                        Receiver = c.ReceiverAccountId == null ? null : new User
+                        {
+                            UserId = c.ReceiverAccount.UserId,
+                            UserName = c.ReceiverAccount.User.UserName
+                        },
+                        Amount = c.Amount,
+                        TransactionId = c.TransactionId,
+                        Type = c.Type,
+                        TypeDescription = c.Type.ToString(),
+                        Income = c.Type == TransactionType.Deposit || c.Type == TransactionType.Transfer && c.ReceiverAccountId == user.Account.AccountId
+                    }).ToList()
             };
         }
 
