@@ -66,8 +66,12 @@ namespace BankApp.Controllers
 
         private void CheckTransactionIsCorrect(Transaction transaction)
         {
-            var user = _userService.GetFullInfoById(transaction.SenderId);
+            if (transaction.Amount < 0)
+            {
+                throw new Exception("Amount has to be positive number");
+            }
 
+            var user = _userService.GetFullInfoById(transaction.SenderId);
             if (user == null)
             {
                throw new Exception("Sender was not found");
