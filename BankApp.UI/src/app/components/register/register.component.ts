@@ -13,31 +13,33 @@ import Login from '../../models/login.model';
 })
 
 export class RegisterComponent implements OnInit {
-
   error: string;
   user: Login;
+  existingUserNames: string[];
+  confirmPassword: string;
 
-  constructor(private userService: UserService, private router: Router, private tokenAuthService: TokenAuthService) { }
+  constructor(private userService: UserService, private router: Router, private tokenAuthService: TokenAuthService) {
+    this.user = new Login();
+    this.confirmPassword = '';
+    userService.getRegisteredUserNames().subscribe(result => {
+      this.existingUserNames = result;
+    });
+  }
 
   register() {
     this.userService.register(this.user.userName, this.user.password).subscribe(
-      r => {
-        if (r.success) {
-          this.tokenAuthService.setToken(r.token);
+      result => {
+        if (result.success) {
+          this.tokenAuthService.setToken(result.token);
           this.router.navigateByUrl('/dashboard');
         } else {
-          this.error = r.errorMessage;
+          this.error = result.errorMessage;
         }
       },
-      r => {
-        console.error(r.error);
+      result => {
+        console.error(result.error);
       });
   }
-  ngOnInit() {
-    this.user = {
-      userName: '',
-      password: ''
-    };
-  }
 
+  ngOnInit() { }
 }

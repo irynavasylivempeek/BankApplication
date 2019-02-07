@@ -1,14 +1,17 @@
 <nav class="header-nav">
   <div class="container">
     <p class="logo">BankAPP</p>
+
     <div *ngIf="isLogged; else elseBlock">
       <button class="btn btn-danger" (click)="logout()">Logout</button>
     </div>
+
     <ng-template #elseBlock>
       <div class="btns">
         <a class="btn btn-info" routerLink="/login">Login</a>
         <a class="btn btn-warning" routerLink="/register">Register</a>
       </div>
     </ng-template>
+
   </div>
 </nav>

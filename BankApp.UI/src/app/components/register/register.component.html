@@ -1,16 +1,45 @@
-<form #myForm="ngForm" (submit)="register()" class="login-form">
-  <h2 class="title">Register</h2>
+<form name="form" #f="ngForm" (ngSubmit)="f.form.valid && register()" class="login-form" novalidate>
+  <div>
 
-  <label for="UserName">Enter login</label>
-  <input name="UserName" #userName="ngModel" type="text" id="UserName" [(ngModel)]="user.userName"/>
+    <h2 class="title">Register</h2>
 
-  <label for="Password">Enter password</label>
-  <input name="Password" #password="ngModel" type="password" id="Password" [(ngModel)]="user.password"/>
+    <div class="form-group">
+      <label for="username">Enter login</label>
+      <input type="text" class="form-control" id="username" name="username" [(ngModel)]="user.userName"
+             #username="ngModel" [ngClass]="{ 'is-invalid': f.submitted && username.invalid }" required/>
 
-  <label for="ConfirmPassword">Repeat password</label>
-  <input name="Password" #password="ngModel" type="password" id="ConfirmPassword" [(ngModel)]="user.password"/>
+      <div *ngIf="f.submitted && username.invalid" class="invalid-feedback">
+        <div *ngIf="username.errors.required">Login is required</div>
+      </div>
+    </div>
 
-  {{error}}
+    <div class="form-group">
+      <label for="password">Enter password</label>
+      <input type="password" class="form-control" id="password" name="password" [(ngModel)]="user.password"
+             validateEqual="confirmPassword" reverse="true"
+             #password="ngModel" [ngClass]="{'is-invalid': f.submitted && password.invalid }" required/>
+
+      <div *ngIf="f.submitted && password.invalid" class="invalid-feedback">
+        <div *ngIf="password.errors.required">Password is required</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="confirmPassword">Confirm password</label>
+      <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" validateEqual="password"
+             [(ngModel)]="confirmPassword" #confirm="ngModel"
+             [ngClass]="{'is-invalid': f.submitted && confirm.invalid }" required/>
+
+      <div *ngIf="f.submitted && confirm.invalid" class="invalid-feedback">
+        <div *ngIf="confirm.errors.required">Confirm password is required</div>
+        <div *ngIf="confirm.errors.validateEqual">Passwords don't match</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="text-danger">{{error}}</div>
 
   <button type="submit">Register</button>
 </form>
+
+

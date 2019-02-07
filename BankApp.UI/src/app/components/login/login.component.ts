@@ -11,32 +11,29 @@ import Login from '../../models/login.model';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
 
+export class LoginComponent implements OnInit {
   error: string;
   user: Login;
 
-  constructor(private userService: UserService, private router: Router, private tokenAuthService: TokenAuthService) { }
+  constructor(private userService: UserService, private router: Router, private tokenAuthService: TokenAuthService) {
+    this.user = new Login();
+  }
 
   login() {
     this.userService.login(this.user.userName, this.user.password).subscribe(
-      r => {
-        if (r.success) {
-          this.tokenAuthService.setToken(r.token);
+      result => {
+        if (result.success) {
+          this.tokenAuthService.setToken(result.token);
           this.router.navigateByUrl('/dashboard');
         } else {
-          this.error = r.errorMessage;
+          this.error = result.errorMessage;
         }
       },
-      r => {
-        console.error(r.error);
+      result => {
+        console.error(result.error);
       });
   }
 
-  ngOnInit() {
-    this.user = {
-      userName: '',
-      password: ''
-    };
-  }
+  ngOnInit() { }
 }

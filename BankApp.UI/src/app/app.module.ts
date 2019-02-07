@@ -3,13 +3,18 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+
 import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import {JwtInterceptor} from './interceptors/jwt.interceptor';
-import {ErrorInterceptor} from './interceptors/error.interceptor';
 import { HeaderComponent } from './components/header/header.component';
+
+import { JwtInterceptor } from './interceptors/jwt.interceptor';
+import { ErrorInterceptor } from './interceptors/error.interceptor';
+
+import { EqualValidator } from './form-validators/equal.validator';
+import { PositiveNumberValidator } from './form-validators/positive-number.validator';
 
 @NgModule({
   declarations: [
@@ -18,6 +23,8 @@ import { HeaderComponent } from './components/header/header.component';
     LoginComponent,
     DashboardComponent,
     HeaderComponent,
+    EqualValidator,
+    PositiveNumberValidator
   ],
   imports: [
     BrowserModule,
@@ -31,4 +38,5 @@ import { HeaderComponent } from './components/header/header.component';
   ],
   bootstrap: [AppComponent]
 })
+
 export class AppModule { }

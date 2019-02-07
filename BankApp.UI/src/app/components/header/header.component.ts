@@ -8,8 +8,8 @@ import { TokenAuthService } from '../../services/token-auth.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit {
 
+export class HeaderComponent implements OnInit {
   isLogged: boolean;
 
   constructor(private router: Router, private tokenAuthService: TokenAuthService) {
@@ -18,10 +18,10 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  ngOnInit() { }
-
   logout() {
     this.tokenAuthService.removeToken();
     this.router.navigateByUrl('/login');
   }
+
+  ngOnInit() { }
 }

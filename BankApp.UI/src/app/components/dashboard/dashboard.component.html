@@ -1,7 +1,8 @@
 <div *ngIf="user">
   <div>
 
-    <h4 class="alert alert-default"> Hello <b>{{user.userName}}</b> your balance is: <b>{{user.balance | currency}}</b></h4>
+    <h4 class="alert alert-default"> Hello <b>{{user.userName}}</b> your balance is: <b>{{user.balance | currency}}</b>
+    </h4>
 
     <div class="row">
       <div class="col-md-12">
@@ -10,35 +11,68 @@
           <div class="panel-heading">
             <h3 class="panel-title">Make a transaction</h3>
           </div>
+
           <div class="panel-body align-content-center">
-            <form class="form-inline" (submit)="makeTransaction()">
+            <form #f="ngForm" class="form-inline" (ngSubmit)="f.form.valid && makeTransaction()">
 
-              <select name="type" [(ngModel)]="transaction.type" class="form-control form-elem">
-                <option [ngValue]='0'>{{transactionTypes[0]}}</option>
-                <option [ngValue]='1'>{{transactionTypes[1]}}</option>
-                <option [ngValue]='2'>{{transactionTypes[2]}}</option>
-            </select>
+              <div class="form-group">
+                <select name="type" id="type" (change)="resetError(); resetSubmit(f);"
+                        class="form-control form-elem"
+                        #type="ngModel"
+                        [ngClass]="{ 'is-invalid': f.submitted && type.invalid }"
+                        [(ngModel)]="transaction.type"
+                        required>
+                  <option *ngFor="let type of transactionTypes" [ngValue]='type'>{{type}}</option>
+                </select>
 
-              <div class="form-group form-elem">
-                <div class="input-group">
-                  <span class="input-group-addon">$</span>
-                  <input ng-required="transaction.amount" name="amount" [(ngModel)]="transaction.amount" type="number" step="0.01" min=0.01 [attr.max]="transaction.type == 0 ? null : user.balance" class="form-control" id="amount" placeholder="0.01" >
+                <div *ngIf="f.submitted && type.invalid" class="invalid-feedback">
+                  <div *ngIf="type.errors.required">Please choose type</div>
                 </div>
               </div>
 
-              <select name="receiverId" [(ngModel)]="transaction.receiverId" class="form-control form-elem" [attr.hidden]="transaction.type == 2 ? null : ''">
-                <option [ngValue]='0' disabled>Select receiver</option>
-                <option *ngFor="let transferReceiver of transferReceivers" [ngValue]="transferReceiver.userId">
-                  {{transferReceiver.userName}}
-                </option>
-              </select>
+                <div class="input-group">
+                  <div class="form-group">
+                  <span class="input-group-addon">$</span>
+                  <input name="amount" id="amount" (keydown)="resetError()"
+                         class="form-control form-elem"
+                         #amount="ngModel"
+                         [ngClass]="{ 'is-invalid': f.submitted && amount.invalid }"
+                         [(ngModel)]="transaction.amount"
+                         type="number" step="0.01" min=0.01
+                         positiveNumber required>
+
+                  <div *ngIf="f.submitted && amount.invalid" class="invalid-feedback">
+                    <div *ngIf="amount.errors.required">Please enter amount</div>
+                    <div *ngIf="amount.errors.positiveNumber">Amount is incorrect</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group" *ngIf="transaction.type == 'transfer'">
+                <select name="receiver" id="receiver" (change)="resetError()"
+                        class="form-control form-elem"
+                        #receiver="ngModel"
+                        [ngClass]="{ 'is-invalid': f.submitted && receiver.invalid }"
+                        [(ngModel)]="transaction.receiverId"
+                        required>
+                  <option *ngFor="let transferReceiver of transferReceivers" [ngValue]="transferReceiver.userId">
+                    {{transferReceiver.userName}}
+                  </option>
+                </select>
+
+                <div *ngIf="f.submitted && receiver.invalid" class="invalid-feedback">
+                  <div *ngIf="receiver.errors.required">Please enter receiver</div>
+                </div>
+              </div>
+              <div class="text-danger">{{error}}</div>
               <button type="submit" class="btn btn-primary">Submit</button>
             </form>
           </div>
+
         </div>
 
         <h3>Your transactions</h3>
-        <hr />
+        <hr/>
         <table class="table table-striped table-bordered table-condensed">
           <thead>
           <tr>

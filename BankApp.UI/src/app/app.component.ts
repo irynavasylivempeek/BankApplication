@@ -10,15 +10,9 @@ import { TokenAuthService } from './services/token-auth.service';
 })
 
 export class AppComponent {
-  constructor(private tokenAuthService: TokenAuthService, private router: Router) {
-  }
+  constructor(private tokenAuthService: TokenAuthService, private router: Router) { }
 
   ngOnInit () {
-    if (this.tokenAuthService.hasToken()) {
-      this.router.navigateByUrl('/dashboard');
-    } else {
-      this.router.navigateByUrl('/login');
-    }
+    this.router.navigateByUrl(this.tokenAuthService.hasToken() ? '/dashboard' : '/login');
   }
-
 }

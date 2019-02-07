@@ -1,6 +1,6 @@
 export default class Transaction {
   senderId: number;
   receiverId: number;
-  type: number;
+  type: string;
   amount: number;
 }

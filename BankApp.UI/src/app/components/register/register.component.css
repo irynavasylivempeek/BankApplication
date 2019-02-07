@@ -24,12 +24,14 @@
   padding: 5px 20px;
   color: white;
 }
+
 .login-form input{
   border: none;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, .3);
   padding: 7px;
 }
+
 .login-form label{
   margin: 10px 0;
 }

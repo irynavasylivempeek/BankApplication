@@ -68,6 +68,13 @@ namespace BankApp.Controllers
             return _userService.GetAll().Where(c=>c.UserId!=id);
         }
 
+        [AllowAnonymous]
+        [HttpGet("getRegisteredUserNames")]
+        public IEnumerable<string> GetRegisteredUserNames()
+        {
+            return _userService.GetAll().Select(c=>c.UserName);
+        }
+
         private string GenerateJsonWebToken(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));

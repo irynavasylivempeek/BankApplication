@@ -1,6 +1,6 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 import User from '../models/user.model';
 import Response from '../models/response.model';
@@ -13,17 +13,21 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   login(userName: string, password: string): Observable<Response> {
-    return this.http.post<any>('/api/user/login', {
+    return this.http.post<Response>('/api/user/login', {
       userName,
       password
     });
   }
 
   register(userName: string, password: string): Observable<Response> {
-    return this.http.post<any>('/api/user/register', {
+    return this.http.post<Response>('/api/user/register', {
       userName,
       password
     });
+  }
+
+  getRegisteredUserNames(): Observable<string[]> {
+    return this.http.get<string[]>('/api/user/getRegisteredUserNames');
   }
 
   getUserInfo(): Observable<User> {

@@ -23,6 +23,7 @@ namespace BankApp.BLL
         User GetFullInfoById(int userId);
         LoginResult Login(Login loginUser);
         IEnumerable<User> GetAll();
+        bool Exists(int userId);
     }
 
     public class UserService : IUserService
@@ -123,6 +124,11 @@ namespace BankApp.BLL
                 UserId = c.UserId,
                 UserName = c.UserName
             });
+        }
+
+        public bool Exists(int userId)
+        {
+            return _userRepository.Find(userId) != null;
         }
     }
 }

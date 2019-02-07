@@ -82,7 +82,7 @@ namespace BankApp.Tests.ServicesTests
                 }
             };
             var userRepository = new Mock<IUserRepository>();
-            userRepository.Setup(c => c.SingleOrDefault(It.IsAny<Expression<Func<User, bool>>>())).Returns(user);
+            //userRepository.Setup(c => c.SingleOrDefault(It.IsAny<Expression<Func<User, bool>>>())).Returns(user);
         }
     }
 }
