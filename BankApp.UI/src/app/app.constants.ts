@@ -1,1 +1,5 @@
-export const TransactionTypes = ['deposit', 'withdraw', 'transfer'];
+export const TransactionTypes = [
+  'deposit',
+  'withdraw',
+  'transfer'
+];
