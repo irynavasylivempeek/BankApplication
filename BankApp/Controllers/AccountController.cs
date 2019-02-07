@@ -80,6 +80,10 @@ namespace BankApp.Controllers
             {
                 throw new Exception("Receiver was not found");
             }
+            if (transaction.SenderId == transaction.ReceiverId)
+            {
+                throw new Exception("Sender and receiver cannot be the same account");
+            }
         }
     }
 }
