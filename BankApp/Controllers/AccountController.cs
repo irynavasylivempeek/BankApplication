@@ -65,16 +65,15 @@ namespace BankApp.Controllers
         {
             var result = new TransactionResult();
             var user = _userService.GetFullInfoById(transaction.SenderId);
+
             if (user == null)
             {
                 result.ErrorMessage = "Sender was not found";
             }
-
             else if (transaction.Type != TransactionType.Deposit && transaction.Amount > user.Balance)
             {
                 result.ErrorMessage = "Lack of money to make transaction";
             }
-
             else if (transaction.Type == TransactionType.Transfer && (transaction.ReceiverId == null || !_userService.Exists(transaction.ReceiverId.Value)))
             {
                 result.ErrorMessage = "Receiver was not found";
@@ -83,7 +82,6 @@ namespace BankApp.Controllers
             {
                 result.Success = true;
             }
-
             return result;
         }
     }
