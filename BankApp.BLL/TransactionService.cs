@@ -62,17 +62,20 @@ namespace BankApp.BLL
                         ReceiverAccountId = receiverAccount?.AccountId,
                         Type = transactionDto.Type
                     });
+
                     _accountRepository.Update(senderAccount);
                     _accountRepository.SaveChanges();
+
                     transaction.Commit();
                 }
                 catch (Exception)
                 {
                     transaction.Rollback();
+                    throw new Exception("Sorry, your transaction was canceled! Try again");
                 }
             }
         }
-       
+
         public IEnumerable<TransactionDetails> GetAllByUserId(int userId)
         {
             var userTransactions = _transactionRepository.GetWithReceiver(c => c.SenderAccount.UserId == userId);

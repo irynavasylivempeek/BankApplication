@@ -14,6 +14,10 @@ namespace BankApp.Domain
         public int UserId { set; get; }
         public User User { set; get; }
 
+        [ConcurrencyCheck]
+        [Timestamp]
+        public byte[] Version { get; set; }
+
         [InverseProperty("SenderAccount")]
         public List<Transaction> Transactions { set; get; }
 

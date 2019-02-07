@@ -17,6 +17,10 @@
     <Compile Remove="Migrations\20190131122523_RemovedSalt.cs" />
     <Compile Remove="Migrations\20190131122552_AddSaltByteArray.cs" />
     <Compile Remove="Migrations\20190131122643_RemovedSalt.cs" />
+    <Compile Remove="Migrations\20190207101157_RowVersion.cs" />
+    <Compile Remove="Migrations\20190207104207_RowVersion.cs" />
+    <Compile Remove="Migrations\20190207104926_RowVersionAndConcurencyToken.cs" />
+    <Compile Remove="Migrations\20190207122526_ConcurencyToken.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -51,38 +51,35 @@ namespace BankApp.Controllers
         {
             var id = Int32.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             transaction.SenderId = id;
-
-            var checkResult = CheckTransactionIsCorrect(transaction);
-            if (!checkResult.Success)
-                return checkResult;
-
-            _transactionService.MakeTransaction(transaction);
+            try
+            {
+                CheckTransactionIsCorrect(transaction);
+                _transactionService.MakeTransaction(transaction);
+            }
+            catch (Exception e)
+            {
+                return new TransactionResult{ ErrorMessage = e.Message };
+            }
             var freshUserDetails = _userService.GetFullInfoById(transaction.SenderId);
             return new TransactionResult { Success = true, User = freshUserDetails };
         }
 
-        private TransactionResult CheckTransactionIsCorrect(Transaction transaction)
+        private void CheckTransactionIsCorrect(Transaction transaction)
         {
-            var result = new TransactionResult();
             var user = _userService.GetFullInfoById(transaction.SenderId);
 
             if (user == null)
             {
-                result.ErrorMessage = "Sender was not found";
+               throw new Exception("Sender was not found");
             }
-            else if (transaction.Type != TransactionType.Deposit && transaction.Amount > user.Balance)
+            if (transaction.Type != TransactionType.Deposit && transaction.Amount > user.Balance)
             {
-                result.ErrorMessage = "Lack of money to make transaction";
+                throw new Exception("Lack of money to make transaction");
             }
-            else if (transaction.Type == TransactionType.Transfer && (transaction.ReceiverId == null || !_userService.Exists(transaction.ReceiverId.Value)))
+            if (transaction.Type == TransactionType.Transfer && (transaction.ReceiverId == null || !_userService.Exists(transaction.ReceiverId.Value)))
             {
-                result.ErrorMessage = "Receiver was not found";
+                throw new Exception("Receiver was not found");
             }
-            else
-            {
-                result.Success = true;
-            }
-            return result;
         }
     }
 }
