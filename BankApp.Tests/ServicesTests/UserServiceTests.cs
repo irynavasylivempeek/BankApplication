@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using BankApp.BLL;
@@ -77,12 +78,17 @@ namespace BankApp.Tests.ServicesTests
                 },
                 new User()
                 {
-                    UserId = 2, UserName = "goryakdmytro",
-                    
+                    UserId = 2, UserName = "goryakdmytro"
+                },
+                new User()
+                {
+                    UserId = 3, UserName = "murysolga"
                 }
             };
             var userRepository = new Mock<IUserRepository>();
-            //userRepository.Setup(c => c.SingleOrDefault(It.IsAny<Expression<Func<User, bool>>>())).Returns(user);
+            userRepository.Setup(c => c.GetAll()).Returns(allUsers);
+            var userService = new UserService(userRepository.Object);
+            Assert.AreEqual(userService.GetAll().Count(), allUsers.Count);
         }
     }
 }

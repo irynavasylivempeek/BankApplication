@@ -7,6 +7,7 @@ using BankApp.DAL.Repositories;
 using BankApp.Domain;
 using BankApp.Domain.Enums;
 using BankApp.DTO.Transactions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Transaction = BankApp.DTO.Transactions.Transaction;
 using User = BankApp.DTO.Users.User;
@@ -68,7 +69,7 @@ namespace BankApp.BLL
 
                     transaction.Commit();
                 }
-                catch (Exception)
+                catch (DbUpdateConcurrencyException)
                 {
                     transaction.Rollback();
                     throw new Exception("Sorry, your transaction was canceled! Try again");
