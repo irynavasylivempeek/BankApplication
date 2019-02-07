@@ -10,6 +10,7 @@ using BankApp.DTO;
 using BankApp.DTO.Transactions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BankApp.Controllers
 {
@@ -17,6 +18,7 @@ namespace BankApp.Controllers
     [Authorize]
     public class AccountController : Controller
     {
+        private int attempts = 5;
         private readonly ITransactionService _transactionService;
         private readonly IUserService _userService;
 
@@ -51,15 +53,29 @@ namespace BankApp.Controllers
         {
             var id = Int32.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             transaction.SenderId = id;
+
             try
             {
                 CheckTransactionIsCorrect(transaction);
                 _transactionService.MakeTransaction(transaction);
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (attempts-- > 0)
+                {
+                    MakeTransaction(transaction);
+                }
+                else
+                {
+                    return new TransactionResult()
+                        { ErrorMessage = "Sorry, your transaction was canceled! Try again later" };
+                }
+            }
             catch (Exception e)
             {
-                return new TransactionResult{ ErrorMessage = e.Message };
+                return new TransactionResult { ErrorMessage = e.Message };
             }
+
             var freshUserDetails = _userService.GetFullInfoById(transaction.SenderId);
             return new TransactionResult { Success = true, User = freshUserDetails };
         }
@@ -74,7 +90,7 @@ namespace BankApp.Controllers
             var user = _userService.GetFullInfoById(transaction.SenderId);
             if (user == null)
             {
-               throw new Exception("Sender was not found");
+                throw new Exception("Sender was not found");
             }
             if (transaction.Type != TransactionType.Deposit && transaction.Amount > user.Balance)
             {

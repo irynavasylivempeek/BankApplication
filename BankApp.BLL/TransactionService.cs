@@ -9,6 +9,7 @@ using BankApp.Domain.Enums;
 using BankApp.DTO.Transactions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.EntityFrameworkCore.Update;
 using Transaction = BankApp.DTO.Transactions.Transaction;
 using User = BankApp.DTO.Users.User;
 
@@ -24,6 +25,7 @@ namespace BankApp.BLL
     {
         private readonly IAccountRepository _accountRepository;
         private readonly ITransactionRepository _transactionRepository;
+        private int attempts = 5;
 
         public TransactionService(IAccountRepository accountRepository, ITransactionRepository transactionRepository)
         {
@@ -69,10 +71,13 @@ namespace BankApp.BLL
 
                     transaction.Commit();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception e)
                 {
                     transaction.Rollback();
-                    throw new Exception("Sorry, your transaction was canceled! Try again");
+                    _accountRepository.DetachAllEntities();
+                    if (e is DbUpdateConcurrencyException)
+                        throw;
+                    throw new Exception("Sorry, your transaction was canceled! Try again later");
                 }
             }
         }

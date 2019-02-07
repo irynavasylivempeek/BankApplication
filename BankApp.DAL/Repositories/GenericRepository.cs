@@ -22,6 +22,7 @@ namespace BankApp.DAL.Repositories
         IEnumerable<TEntity> GetAll();
         IDbContextTransaction BeginTransaction();
         int SaveChanges();
+        void DetachAllEntities();
     }
 
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
@@ -94,5 +95,17 @@ namespace BankApp.DAL.Repositories
         {
             return _context.SaveChanges();
         }
-    }
+
+        public void DetachAllEntities()
+        {
+            var changedEntriesCopy = _context.ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Added ||
+                            e.State == EntityState.Modified ||
+                            e.State == EntityState.Deleted)
+                .ToList();
+
+            foreach (var entry in changedEntriesCopy)
+                entry.State = EntityState.Detached;
+        }
+    } 
 }
