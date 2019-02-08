@@ -18,7 +18,6 @@ namespace BankApp.BLL
     public interface ITransactionService
     {
         void MakeTransaction(Transaction transactionDto);
-        IEnumerable<TransactionDetails> GetAllByUserId(int userId);
     }
 
     public class TransactionService : ITransactionService
@@ -80,27 +79,6 @@ namespace BankApp.BLL
                     throw new Exception("Sorry, your transaction was canceled! Try again later");
                 }
             }
-        }
-
-        public IEnumerable<TransactionDetails> GetAllByUserId(int userId)
-        {
-            var userTransactions = _transactionRepository.GetWithReceiver(c => c.SenderAccount.UserId == userId);
-            return userTransactions.Select(c => new TransactionDetails()
-            {
-                Sender = new User
-                {
-                    UserId = c.SenderAccount.UserId,
-                    UserName = c.SenderAccount.User.UserName
-                },
-                Receiver = c.ReceiverAccountId == null ? null : new User
-                {
-                    UserId = c.ReceiverAccount.UserId,
-                    UserName = c.ReceiverAccount.User.UserName
-                },
-                Amount = c.Amount,
-                TransactionId = c.TransactionId,
-                Type = c.Type
-            });
         }
     }
 }

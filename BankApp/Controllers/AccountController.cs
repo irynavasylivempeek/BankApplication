@@ -18,7 +18,7 @@ namespace BankApp.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private int attempts = 5;
+        private int _attempts = 5;
         private readonly ITransactionService _transactionService;
         private readonly IUserService _userService;
 
@@ -61,7 +61,7 @@ namespace BankApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (attempts-- > 0)
+                if (_attempts-- > 0)
                 {
                     MakeTransaction(transaction);
                 }

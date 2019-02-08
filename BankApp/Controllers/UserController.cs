@@ -57,22 +57,15 @@ namespace BankApp.Controllers
         [HttpGet("userInfo")]
         public User UserInfo()
         {
-            var id = Int32.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            Int32.TryParse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int id);
             return _userService.GetFullInfoById(id);
         }
 
         [HttpGet("getAll")]
         public IEnumerable<User> GetAll()
         {
-            var id = Int32.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            return _userService.GetAll().Where(c=>c.UserId!=id);
-        }
-
-        [AllowAnonymous]
-        [HttpGet("getRegisteredUserNames")]
-        public IEnumerable<string> GetRegisteredUserNames()
-        {
-            return _userService.GetAll().Select(c=>c.UserName);
+            Int32.TryParse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int id);
+            return _userService.GetAll().Where(c=>c.UserId != id);
         }
 
         private string GenerateJsonWebToken(User user)

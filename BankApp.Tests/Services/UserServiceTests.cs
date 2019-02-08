@@ -12,7 +12,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using User = BankApp.Domain.User;
 
-namespace BankApp.Tests.ServicesTests
+namespace BankApp.Tests.Services
 {
     [TestClass]
     public class UserServiceTests
@@ -37,7 +37,7 @@ namespace BankApp.Tests.ServicesTests
         }
 
         [TestMethod]
-        public void Login_ReturnsFalse_WhenUserDoesntExist()
+        public void Login_ReturnsFailure_WhenUserDoesntExist()
         {
             var userRepository = new Mock<IUserRepository>();
             userRepository.Setup(c => c.SingleOrDefault(It.IsAny<Expression<Func<User, bool>>>())).Returns((User) null);
@@ -46,7 +46,7 @@ namespace BankApp.Tests.ServicesTests
         }
 
         [TestMethod]
-        public void Login_ReturnsFalse_WhenPasswordIsWrong()
+        public void Login_ReturnsFailure_WhenPasswordIsWrong()
         {
             var salt = SaltedHashGenerator.GenerateSalt();
             var user = new User
