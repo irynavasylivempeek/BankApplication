@@ -18,9 +18,10 @@ namespace BankApp.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private int _attempts = 5;
         private readonly ITransactionService _transactionService;
         private readonly IUserService _userService;
+
+        private int _attempts = 5;
 
         public AccountController(ITransactionService transactionService, IUserService userService)
         {

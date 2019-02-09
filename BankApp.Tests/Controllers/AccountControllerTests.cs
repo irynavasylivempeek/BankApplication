@@ -20,6 +20,7 @@ namespace BankApp.Tests.Controllers
         private Mock<HttpContext> _httpContext;
         private Mock<IUserService> _userService;
         private Mock<ITransactionService> _transactionService;
+
         private const int UserId = 1;
 
         [TestInitialize]

@@ -73,6 +73,7 @@ namespace BankApp.Controllers
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var expiryTime = DateTime.Now + new TimeSpan(0, int.Parse(_config["Jwt:ExpiryInMinutes"]), 0);
+
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString())

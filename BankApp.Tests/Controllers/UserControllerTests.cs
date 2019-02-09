@@ -23,6 +23,7 @@ namespace BankApp.Tests.Controllers
         private Mock<IUserService> _userService;
         private Mock<HttpContext> _httpContext;
         private IConfiguration _config;
+
         private Login _user;
         private const int UserId = 1;
 
