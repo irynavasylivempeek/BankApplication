@@ -63,13 +63,13 @@ namespace BankApp.Controllers
             {
                 if (_attempts-- > 0)
                 {
-                    MakeTransaction(transaction);
+                    return MakeTransaction(transaction);
                 }
-                else
+                return new TransactionResult()
                 {
-                    return new TransactionResult()
-                        { ErrorMessage = "Sorry, your transaction was canceled! Try again later" };
-                }
+                    ErrorMessage = "Sorry, your transaction was canceled! Try again later"
+                };
+
             }
             catch (Exception e)
             {
@@ -96,13 +96,13 @@ namespace BankApp.Controllers
             {
                 throw new Exception("Lack of money to make transaction");
             }
+            if (transaction.Type == TransactionType.Transfer && transaction.SenderId == transaction.ReceiverId)
+            {
+                throw new Exception("Sender and receiver cannot be the same account");
+            }
             if (transaction.Type == TransactionType.Transfer && (transaction.ReceiverId == null || !_userService.Exists(transaction.ReceiverId.Value)))
             {
                 throw new Exception("Receiver was not found");
-            }
-            if (transaction.SenderId == transaction.ReceiverId)
-            {
-                throw new Exception("Sender and receiver cannot be the same account");
             }
         }
     }

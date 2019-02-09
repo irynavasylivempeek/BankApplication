@@ -7,6 +7,8 @@ using BankApp.Controllers;
 using BankApp.DTO.Transactions;
 using BankApp.DTO.Users;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -28,12 +30,16 @@ namespace BankApp.Tests.Controllers
             _transactionService = new Mock<ITransactionService>();
 
             var userClaims = new Mock<ClaimsPrincipal>();
-            userClaims.Setup(c => c.FindFirst(It.IsAny<string>()))
-                      .Returns(new Claim(ClaimTypes.NameIdentifier, UserId.ToString()));
+            userClaims
+                .Setup(c => c.FindFirst(It.IsAny<string>()))
+                .Returns(new Claim(ClaimTypes.NameIdentifier, UserId.ToString()));
 
-            _httpContext.SetupGet(c => c.User).Returns(userClaims.Object);
+            _httpContext
+                .SetupGet(c => c.User)
+                .Returns(userClaims.Object);
         }
 
+        // the same for Withdraw and Transfer
         [TestMethod]
         public void Deposit_ReturnFailure_WhenAmountIsLessThanZero()
         {
@@ -42,8 +48,125 @@ namespace BankApp.Tests.Controllers
             {
                 ControllerContext = { HttpContext = _httpContext.Object }
             };
+
             var result = accountController.Deposit(transaction);
             Assert.IsTrue(!result.Success && result.ErrorMessage == "Amount has to be positive number");
+        }
+
+        // the same for Withdraw and Transfer
+        [TestMethod]
+        public void Deposit_ReturnFailure_WhenUserNotFound()
+        {
+            _userService
+                .Setup(c => c.GetFullInfoById(It.IsAny<int>()))
+                .Returns((User)null);
+
+            var transaction = new Transaction() { Amount = 10 };
+            var accountController = new AccountController(_transactionService.Object, _userService.Object)
+            {
+                ControllerContext = { HttpContext = _httpContext.Object }
+            };
+
+            var result = accountController.Deposit(transaction);
+            Assert.IsTrue(!result.Success && result.ErrorMessage == "Sender was not found");
+        }
+
+        //the same for Transfer
+        [TestMethod]
+        public void Withdraw_ReturnFailure_WhenLackOfMoney()
+        {
+            _userService
+                .Setup(c => c.GetFullInfoById(It.IsAny<int>()))
+                .Returns(new User{ Balance = 5 });
+
+            var transaction = new Transaction() { Amount = 10 };
+            var accountController = new AccountController(_transactionService.Object, _userService.Object)
+            {
+                ControllerContext = { HttpContext = _httpContext.Object }
+            };
+
+            var result = accountController.Withdraw(transaction);
+            Assert.IsTrue(!result.Success && result.ErrorMessage == "Lack of money to make transaction");
+        }
+
+        [TestMethod]
+        public void Transfer_ReturnFailure_WhenReceiverIsNull()
+        {
+            _userService
+                .Setup(c => c.GetFullInfoById(It.IsAny<int>()))
+                .Returns(new User { Balance = 10 });
+
+            var transaction = new Transaction() { Amount = 10 };
+            var accountController = new AccountController(_transactionService.Object, _userService.Object)
+            {
+                ControllerContext = { HttpContext = _httpContext.Object }
+            };
+
+            var result = accountController.Transfer(transaction);
+            Assert.IsTrue(!result.Success && result.ErrorMessage == "Receiver was not found");
+        }
+
+        [TestMethod]
+        public void Transfer_ReturnFailure_WhenReceiverDoesntExist()
+        {
+            _userService
+                .Setup(c => c.GetFullInfoById(It.IsAny<int>()))
+                .Returns(new User { Balance = 10 });
+
+            _userService
+                .Setup(c => c.Exists(It.IsAny<int>()))
+                .Returns(false);
+
+            var transaction = new Transaction() { Amount = 10, ReceiverId = 3 };
+            var accountController = new AccountController(_transactionService.Object, _userService.Object)
+            {
+                ControllerContext = { HttpContext = _httpContext.Object }
+            };
+
+            var result = accountController.Transfer(transaction);
+            Assert.IsTrue(!result.Success && result.ErrorMessage == "Receiver was not found");
+        }
+
+        [TestMethod]
+        public void Transfer_ReturnFailure_WhenSenderAndReceiverAreSame()
+        {
+            _userService
+                .Setup(c => c.GetFullInfoById(It.IsAny<int>()))
+                .Returns(new User { UserId = UserId, Balance = 10 });
+
+            var transaction = new Transaction() { Amount = 10, ReceiverId = UserId };
+            var accountController = new AccountController(_transactionService.Object, _userService.Object)
+            {
+                ControllerContext = { HttpContext = _httpContext.Object }
+            };
+
+            var result = accountController.Transfer(transaction);
+            Assert.IsTrue(!result.Success && result.ErrorMessage == "Sender and receiver cannot be the same account");
+        }
+
+        [TestMethod]
+        public void Deposit_ReturnFailure_WhenThrowsDbUpdateConcurrencyException()
+        {
+            _userService
+                .Setup(c => c.GetFullInfoById(It.IsAny<int>()))
+                .Returns(new User { UserId = 1, Balance = 10 });
+
+            _userService
+                .Setup(c => c.Exists(It.IsAny<int>()))
+                .Returns(true);
+
+            _transactionService
+                .Setup(c => c.MakeTransaction(It.IsAny<Transaction>()))
+                .Throws(new DbUpdateConcurrencyException("", new List<IUpdateEntry> { Mock.Of<IUpdateEntry>() }));
+
+            var transaction = new Transaction() { Amount = 10, ReceiverId = 3 };
+            var accountController = new AccountController(_transactionService.Object, _userService.Object)
+            {
+                ControllerContext = { HttpContext = _httpContext.Object }
+            };
+
+            var result = accountController.Transfer(transaction);
+            Assert.IsTrue(!result.Success && result.ErrorMessage == "Sorry, your transaction was canceled! Try again later");
         }
     }
 }
