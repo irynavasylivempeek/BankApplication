@@ -10,6 +10,7 @@ using BankApp.DTO.Transactions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Update;
+using Microsoft.Extensions.Configuration;
 using Transaction = BankApp.DTO.Transactions.Transaction;
 using User = BankApp.DTO.Users.User;
 
@@ -24,15 +25,21 @@ namespace BankApp.BLL
     {
         private readonly IAccountRepository _accountRepository;
         private readonly ITransactionRepository _transactionRepository;
-        private int attempts = 5;
+        private readonly int _attemptsCount;
 
-        public TransactionService(IAccountRepository accountRepository, ITransactionRepository transactionRepository)
+        public TransactionService(IAccountRepository accountRepository, ITransactionRepository transactionRepository, IConfiguration configuration)
         {
             _accountRepository = accountRepository;
             _transactionRepository = transactionRepository;
+            _attemptsCount = configuration.GetValue<int>("ConcurrencyRetryAttempts");
         }
 
         public void MakeTransaction(Transaction transactionDto)
+        {
+            TryMakeTransaction(transactionDto, 0);
+        }
+
+        private void TryMakeTransaction(Transaction transactionDto, int attemptNumber)
         {
             var senderAccount = _accountRepository.SingleOrDefault(c => c.UserId == transactionDto.SenderId);
             Account receiverAccount = null;
@@ -74,9 +81,14 @@ namespace BankApp.BLL
                 {
                     transaction.Rollback();
                     _accountRepository.DetachAllEntities();
-                    if (e is DbUpdateConcurrencyException)
-                        throw;
-                    throw new Exception("Sorry, your transaction was canceled! Try again later");
+                    if (e is DbUpdateConcurrencyException && attemptNumber < _attemptsCount)
+                    {
+                        TryMakeTransaction(transactionDto, ++attemptNumber);
+                    }
+                    else
+                    {
+                        throw new Exception("Sorry, your transaction was canceled! Try again later");
+                    }
                 }
             }
         }

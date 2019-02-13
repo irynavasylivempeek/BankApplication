@@ -71,6 +71,7 @@ namespace BankApp.Controllers
         private string GenerateJsonWebToken(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+            var issuer = _config["Jwt:Issuer"];
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var expiryTime = DateTime.Now + new TimeSpan(0, int.Parse(_config["Jwt:ExpiryInMinutes"]), 0);
 
@@ -79,8 +80,8 @@ namespace BankApp.Controllers
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString())
             };
 
-            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
-                _config["Jwt:Issuer"],
+            var token = new JwtSecurityToken(issuer,
+                issuer,
                 claims,
                 expires: expiryTime,
                 signingCredentials: credentials);

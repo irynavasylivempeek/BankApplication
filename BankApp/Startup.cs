@@ -36,10 +36,11 @@ namespace BankApp
 
             services.ConfigureDependencyInjection();
 
+            var issuer = Configuration["Jwt:Issuer"];
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    options.ClaimsIssuer = Configuration["Jwt:Issuer"];
+                    options.ClaimsIssuer = issuer;
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -47,8 +48,8 @@ namespace BankApp
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = Configuration["Jwt:Issuer"],
-                        ValidAudience = Configuration["Jwt:Issuer"],
+                        ValidIssuer = issuer,
+                        ValidAudience = issuer,
                         
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                     };

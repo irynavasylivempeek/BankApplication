@@ -21,8 +21,6 @@ namespace BankApp.Controllers
         private readonly ITransactionService _transactionService;
         private readonly IUserService _userService;
 
-        private int _attempts = 5;
-
         public AccountController(ITransactionService transactionService, IUserService userService)
         {
             _transactionService = transactionService;
@@ -59,19 +57,7 @@ namespace BankApp.Controllers
             {
                 CheckTransactionIsCorrect(transaction);
                 _transactionService.MakeTransaction(transaction);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (_attempts-- > 0)
-                {
-                    return MakeTransaction(transaction);
-                }
-                return new TransactionResult()
-                {
-                    ErrorMessage = "Sorry, your transaction was canceled! Try again later"
-                };
-
-            }
+            }     
             catch (Exception e)
             {
                 return new TransactionResult { ErrorMessage = e.Message };
