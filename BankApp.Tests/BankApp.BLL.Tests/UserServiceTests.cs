@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using BankApp.BLL;
 using BankApp.DAL.Repositories;
+using BankApp.Domain;
 using BankApp.DTO;
 using BankApp.DTO.Users;
 using BankApp.Utils;
@@ -12,7 +13,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using User = BankApp.Domain.User;
 
-namespace BankApp.Tests.Services
+namespace BankApp.Tests.BankApp.BLL.Tests
 {
     [TestClass]
     public class UserServiceTests
@@ -26,6 +27,30 @@ namespace BankApp.Tests.Services
         }
 
         [TestMethod]
+        public void AddUser()
+        {
+            var loginUser = new Login()
+            {
+                UserName = "irynavasyliv",
+                Password = "24041999"
+            };
+
+            _userRepository.Setup(c => c.Add(It.IsAny<User>())).Returns(new User()
+            {
+                UserName = "irynavasyliv",
+                UserId = 1,
+                Account = new Account() { Balance = 0 },
+            });
+
+            var userService = new UserService(_userRepository.Object);
+            var loginResult = userService.Add(loginUser);
+            Assert.IsTrue(loginResult.Success);
+            
+            _userRepository.Verify(c=> c.Add(It.IsAny<User>()), Times.Once);
+            _userRepository.Verify(c=> c.SaveChanges(), Times.Once);
+        }
+
+        [TestMethod]
         public void AddUser_ReturnsFalse_WhenExistsUserWithSameUserName()
         {
             _userRepository
@@ -35,6 +60,9 @@ namespace BankApp.Tests.Services
             var userService = new UserService(_userRepository.Object);
             var loginResult = userService.Add(It.IsAny<Login>());
             Assert.IsFalse(loginResult.Success);
+
+            _userRepository.Verify(c => c.Add(It.IsAny<User>()), Times.Never);
+            _userRepository.Verify(c => c.SaveChanges(), Times.Never);
         }
 
         [TestMethod]
@@ -100,6 +128,17 @@ namespace BankApp.Tests.Services
 
             var userService = new UserService(_userRepository.Object);
             Assert.AreEqual(userService.GetAll().Count(), allUsers.Count);
+        }
+
+        [TestMethod]
+        public void Exists()
+        {
+            _userRepository
+                .Setup(c => c.Find(It.IsAny<int>()))
+                .Returns(Mock.Of<User>());
+
+            var userService = new UserService(_userRepository.Object);
+            Assert.IsTrue(userService.Exists(It.IsAny<int>()));
         }
     }
 }

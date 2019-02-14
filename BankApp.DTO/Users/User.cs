@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using BankApp.DTO.Transactions;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace BankApp.DTO.Users
 {
@@ -7,7 +8,5 @@ namespace BankApp.DTO.Users
     {
         public int UserId { set; get; }
         public string UserName { set; get; }
-        public double Balance { set; get; }
-        public List<TransactionDetails> Transactions { set; get; }
     }
 }

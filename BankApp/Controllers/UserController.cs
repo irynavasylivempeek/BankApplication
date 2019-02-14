@@ -55,20 +55,20 @@ namespace BankApp.Controllers
         }
 
         [HttpGet("userInfo")]
-        public User UserInfo()
+        public UserDetails UserInfo()
         {
             Int32.TryParse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int id);
             return _userService.GetFullInfoById(id);
         }
 
         [HttpGet("getAll")]
-        public IEnumerable<User> GetAll()
+        public IEnumerable<UserDetails> GetAll()
         {
             Int32.TryParse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int id);
             return _userService.GetAll().Where(c=>c.UserId != id);
         }
 
-        private string GenerateJsonWebToken(User user)
+        private string GenerateJsonWebToken(UserDetails userDetails)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var issuer = _config["Jwt:Issuer"];
@@ -77,7 +77,7 @@ namespace BankApp.Controllers
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString())
+                new Claim(JwtRegisteredClaimNames.Sub, userDetails.UserId.ToString())
             };
 
             var token = new JwtSecurityToken(issuer,

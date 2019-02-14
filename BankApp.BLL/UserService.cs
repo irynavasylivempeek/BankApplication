@@ -13,16 +13,15 @@ using BankApp.DTO.Users;
 using BankApp.Utils;
 using Microsoft.EntityFrameworkCore.Internal;
 using Transaction = BankApp.DTO.Transactions.Transaction;
-using User = BankApp.DTO.Users.User;
 
 namespace BankApp.BLL
 {
     public interface IUserService
     {
         LoginResult Add(Login loginUser);
-        User GetFullInfoById(int userId);
+        UserDetails GetFullInfoById(int userId);
         LoginResult Login(Login loginUser);
-        IEnumerable<User> GetAll();
+        IEnumerable<UserDetails> GetAll();
         bool Exists(int userId);
     }
 
@@ -41,7 +40,7 @@ namespace BankApp.BLL
                 return new LoginResult()
                 {
                     Success = false,
-                    ErrorMessage = "There is a user with the same login"
+                    ErrorMessage = "There is a userDetails with the same login"
                 };
             var salt = SaltedHashGenerator.GenerateSalt();
             var newUser = _userRepository.Add(new Domain.User
@@ -55,7 +54,7 @@ namespace BankApp.BLL
             return new LoginResult()
             {
                 Success = true,
-                User = new User()
+                User = new UserDetails()
                 {
                     UserId = newUser.UserId,
                     UserName = newUser.UserName,
@@ -64,12 +63,12 @@ namespace BankApp.BLL
             };
         }
 
-        public User GetFullInfoById(int userId)
+        public UserDetails GetFullInfoById(int userId)
         {
             var user = _userRepository.GetWithTransactions(c => c.UserId == userId);
             if (user == null)
                 return null;
-            return new User()
+            return new UserDetails()
             {
                 UserId = user.UserId,
                 Balance = user.Account.Balance,
@@ -79,12 +78,12 @@ namespace BankApp.BLL
                     .OrderByDescending(c => c.TransactionId)
                     .Select(c => new TransactionDetails()
                     {
-                        Sender = new User
+                        Sender = new DTO.Users.User()
                         {
                             UserId = c.SenderAccount.UserId,
                             UserName = c.SenderAccount.User.UserName
                         },
-                        Receiver = c.ReceiverAccountId == null ? null : new User
+                        Receiver = c.ReceiverAccountId == null ? null : new DTO.Users.User()
                         {
                             UserId = c.ReceiverAccount.UserId,
                             UserName = c.ReceiverAccount.User.UserName
@@ -92,7 +91,6 @@ namespace BankApp.BLL
                         Amount = c.Amount,
                         TransactionId = c.TransactionId,
                         Type = c.Type,
-                        TypeDescription = c.Type.ToString(),
                         Income = c.Type == TransactionType.Deposit || c.Type == TransactionType.Transfer && c.ReceiverAccountId == user.Account.AccountId
                     }).ToList()
             };
@@ -110,7 +108,7 @@ namespace BankApp.BLL
             bool valid = SaltedHashGenerator.VerifyHash(user.Password, loginUser.Password, user.Salt);
             return new LoginResult()
             {
-                User = valid ? new User()
+                User = valid ? new UserDetails()
                 {
                     UserId = user.UserId,
                     UserName = user.UserName
@@ -120,9 +118,9 @@ namespace BankApp.BLL
             };
         }
 
-        public IEnumerable<User> GetAll()
+        public IEnumerable<UserDetails> GetAll()
         {
-            return _userRepository.GetAll().Select(c => new User()
+            return _userRepository.GetAll().Select(c => new UserDetails()
             {
                 UserId = c.UserId,
                 UserName = c.UserName

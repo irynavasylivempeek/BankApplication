@@ -86,7 +86,7 @@
           <tr *ngFor="let transaction of user.transactions">
             <td>{{transaction.sender.userName}}</td>
             <td>{{transaction.receiver?.userName}}</td>
-            <td>{{transaction.typeDescription}}</td>
+            <td>{{transaction.type}}</td>
             <td [ngClass]="(transaction.income==true)?'profit-elem':'loss-elem'">{{transaction.amount | currency}}</td>
           </tr>
           </tbody>

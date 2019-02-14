@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Neleus.LambdaCompare;
 
-namespace BankApp.Tests.Controllers
+namespace BankApp.Tests.BankApp.Tests
 {
     [TestClass]
     public class UserControllerTests
@@ -55,7 +55,7 @@ namespace BankApp.Tests.Controllers
                 .Returns(new LoginResult()
                 {
                     Success = true,
-                    User = new User()
+                    User = new UserDetails()
                     {
                         UserId = 1,
                         UserName = "UserName",
@@ -66,6 +66,8 @@ namespace BankApp.Tests.Controllers
             var userController = new UserController(_userService.Object, _config);
             var result = userController.Register(_user);
             Assert.IsTrue(result.Success && !String.IsNullOrEmpty(result.Token));
+
+            _userService.Verify(c=>c.Add(_user), Times.Once);
         }
 
         [TestMethod]
@@ -76,7 +78,7 @@ namespace BankApp.Tests.Controllers
                 .Returns(new LoginResult()
                 {
                     Success = false,
-                    ErrorMessage = "There is a user with the same login"
+                    ErrorMessage = "There is a userDetails with the same login"
                 });
 
             var userController = new UserController(_userService.Object, _config);
@@ -92,7 +94,7 @@ namespace BankApp.Tests.Controllers
                 .Returns(new LoginResult()
                 {
                     Success = true,
-                    User = new User()
+                    User = new UserDetails()
                     {
                         UserId = 1,
                         UserName = "UserName",
@@ -126,7 +128,7 @@ namespace BankApp.Tests.Controllers
         {
             _userService
                 .Setup(c => c.GetFullInfoById(It.IsAny<int>()))
-                .Returns(Mock.Of<User>());
+                .Returns(Mock.Of<UserDetails>());
 
             var userController = new UserController(_userService.Object, _config)
             {
@@ -141,7 +143,7 @@ namespace BankApp.Tests.Controllers
         {
             _userService
                 .Setup(c => c.GetFullInfoById(It.IsAny<int>()))
-                .Returns((User)null);
+                .Returns((UserDetails)null);
 
             var userController = new UserController(_userService.Object, _config)
             {
@@ -154,11 +156,11 @@ namespace BankApp.Tests.Controllers
         [TestMethod]
         public void GetAll()
         {
-            var allUsers = new List<User>()
+            var allUsers = new List<UserDetails>()
             {
-                new User(){ UserId = 1, UserName = "username" },
-                new User(){ UserId = 2, UserName = "username2" },
-                new User(){ UserId = 3, UserName = "username3" }
+                new UserDetails(){ UserId = 1, UserName = "username" },
+                new UserDetails(){ UserId = 2, UserName = "username2" },
+                new UserDetails(){ UserId = 3, UserName = "username3" }
             };
 
             _userService

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace BankApp.Tests.Controllers
+namespace BankApp.Tests.BankApp.Tests
 {
     [TestClass]
     public class AccountControllerTests
@@ -52,6 +52,8 @@ namespace BankApp.Tests.Controllers
 
             var result = accountController.Deposit(transaction);
             Assert.IsTrue(!result.Success && result.ErrorMessage == "Amount has to be positive number");
+
+            _transactionService.Verify(c=>c.MakeTransaction(It.IsAny<Transaction>()), Times.Never);
         }
 
         // the same for Withdraw and Transfer
@@ -60,7 +62,7 @@ namespace BankApp.Tests.Controllers
         {
             _userService
                 .Setup(c => c.GetFullInfoById(It.IsAny<int>()))
-                .Returns((User)null);
+                .Returns((UserDetails)null);
 
             var transaction = new Transaction() { Amount = 10 };
             var accountController = new AccountController(_transactionService.Object, _userService.Object)
@@ -70,6 +72,8 @@ namespace BankApp.Tests.Controllers
 
             var result = accountController.Deposit(transaction);
             Assert.IsTrue(!result.Success && result.ErrorMessage == "Sender was not found");
+
+            _transactionService.Verify(c => c.MakeTransaction(It.IsAny<Transaction>()), Times.Never);
         }
 
         //the same for Transfer
@@ -78,7 +82,7 @@ namespace BankApp.Tests.Controllers
         {
             _userService
                 .Setup(c => c.GetFullInfoById(It.IsAny<int>()))
-                .Returns(new User{ Balance = 5 });
+                .Returns(new UserDetails{ Balance = 5 });
 
             var transaction = new Transaction() { Amount = 10 };
             var accountController = new AccountController(_transactionService.Object, _userService.Object)
@@ -88,6 +92,8 @@ namespace BankApp.Tests.Controllers
 
             var result = accountController.Withdraw(transaction);
             Assert.IsTrue(!result.Success && result.ErrorMessage == "Lack of money to make transaction");
+
+            _transactionService.Verify(c => c.MakeTransaction(It.IsAny<Transaction>()), Times.Never);
         }
 
         [TestMethod]
@@ -95,7 +101,7 @@ namespace BankApp.Tests.Controllers
         {
             _userService
                 .Setup(c => c.GetFullInfoById(It.IsAny<int>()))
-                .Returns(new User { Balance = 10 });
+                .Returns(new UserDetails { Balance = 10 });
 
             var transaction = new Transaction() { Amount = 10 };
             var accountController = new AccountController(_transactionService.Object, _userService.Object)
@@ -105,6 +111,8 @@ namespace BankApp.Tests.Controllers
 
             var result = accountController.Transfer(transaction);
             Assert.IsTrue(!result.Success && result.ErrorMessage == "Receiver was not found");
+
+            _transactionService.Verify(c => c.MakeTransaction(It.IsAny<Transaction>()), Times.Never);
         }
 
         [TestMethod]
@@ -112,7 +120,7 @@ namespace BankApp.Tests.Controllers
         {
             _userService
                 .Setup(c => c.GetFullInfoById(It.IsAny<int>()))
-                .Returns(new User { Balance = 10 });
+                .Returns(new UserDetails { Balance = 10 });
 
             _userService
                 .Setup(c => c.Exists(It.IsAny<int>()))
@@ -126,6 +134,8 @@ namespace BankApp.Tests.Controllers
 
             var result = accountController.Transfer(transaction);
             Assert.IsTrue(!result.Success && result.ErrorMessage == "Receiver was not found");
+
+            _transactionService.Verify(c => c.MakeTransaction(It.IsAny<Transaction>()), Times.Never);
         }
 
         [TestMethod]
@@ -133,7 +143,7 @@ namespace BankApp.Tests.Controllers
         {
             _userService
                 .Setup(c => c.GetFullInfoById(It.IsAny<int>()))
-                .Returns(new User { UserId = UserId, Balance = 10 });
+                .Returns(new UserDetails { UserId = UserId, Balance = 10 });
 
             var transaction = new Transaction() { Amount = 10, ReceiverId = UserId };
             var accountController = new AccountController(_transactionService.Object, _userService.Object)
@@ -143,6 +153,8 @@ namespace BankApp.Tests.Controllers
 
             var result = accountController.Transfer(transaction);
             Assert.IsTrue(!result.Success && result.ErrorMessage == "Sender and receiver cannot be the same account");
+
+            _transactionService.Verify(c => c.MakeTransaction(It.IsAny<Transaction>()), Times.Never);
         }
 
         [TestMethod]
@@ -150,7 +162,7 @@ namespace BankApp.Tests.Controllers
         {
             _userService
                 .Setup(c => c.GetFullInfoById(It.IsAny<int>()))
-                .Returns(new User { UserId = 1, Balance = 10 });
+                .Returns(new UserDetails { UserId = 1, Balance = 10 });
 
             _userService
                 .Setup(c => c.Exists(It.IsAny<int>()))
@@ -158,7 +170,7 @@ namespace BankApp.Tests.Controllers
 
             _transactionService
                 .Setup(c => c.MakeTransaction(It.IsAny<Transaction>()))
-                .Throws(new DbUpdateConcurrencyException("", new List<IUpdateEntry> { Mock.Of<IUpdateEntry>() }));
+                .Throws(new Exception("Sorry, your transaction was canceled! Try again later"));
 
             var transaction = new Transaction() { Amount = 10, ReceiverId = 3 };
             var accountController = new AccountController(_transactionService.Object, _userService.Object)
@@ -168,6 +180,8 @@ namespace BankApp.Tests.Controllers
 
             var result = accountController.Transfer(transaction);
             Assert.IsTrue(!result.Success && result.ErrorMessage == "Sorry, your transaction was canceled! Try again later");
+
+            _transactionService.Verify(c => c.MakeTransaction(It.IsAny<Transaction>()), Times.Once);
         }
     }
 }

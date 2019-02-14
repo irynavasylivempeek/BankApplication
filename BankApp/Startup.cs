@@ -50,7 +50,7 @@ namespace BankApp
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = issuer,
                         ValidAudience = issuer,
-                        
+
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                     };
                 });
@@ -62,11 +62,17 @@ namespace BankApp
                 {
                     Type = "oauth2",
                     Flow = "password",
-                    TokenUrl = "/api/user/login"
+                    TokenUrl = "/api/userDetails/login"
                 });
             });
 
-            services.AddMvc();
+            services
+                .AddMvc()
+                .AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                    options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                }); 
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -83,7 +89,7 @@ namespace BankApp
             });
             app.UseAuthentication();
             app.UseMvc();
-            
+
         }
     }
 }

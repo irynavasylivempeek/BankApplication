@@ -13,11 +13,6 @@ export class TransactionService {
   constructor(private http: HttpClient) { }
 
   makeTransaction(transaction: Transaction): Observable<Response> {
-    return this.http.post<any>(`/api/account/${transaction.type}`,
-      {
-        senderId: transaction.senderId,
-        receiverId: transaction.receiverId,
-        amount: transaction.amount
-      });
+    return this.http.post<any>(`/api/account/${transaction.type}`, transaction);
   }
 }

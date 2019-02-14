@@ -9,6 +9,6 @@ namespace BankApp.DTO.Transactions
     {
         public bool Success { set; get; }
         public string ErrorMessage { set; get; }
-        public User User { set; get; }
+        public UserDetails User { set; get; }
     }
 }

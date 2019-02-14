@@ -12,7 +12,6 @@ using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.Extensions.Configuration;
 using Transaction = BankApp.DTO.Transactions.Transaction;
-using User = BankApp.DTO.Users.User;
 
 namespace BankApp.BLL
 {
@@ -31,7 +30,7 @@ namespace BankApp.BLL
         {
             _accountRepository = accountRepository;
             _transactionRepository = transactionRepository;
-            _attemptsCount = configuration.GetValue<int>("ConcurrencyRetryAttempts");
+            _attemptsCount = Convert.ToInt32(configuration["ConcurrencyRetryAttempts"]);
         }
 
         public void MakeTransaction(Transaction transactionDto)
